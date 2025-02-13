@@ -8,6 +8,37 @@
     <link rel="stylesheet" href="style.css">
     <title>Lenny</title>
 </head>
+<script>
+    const words = ["Safe ", "Free ", "Simple ", "Fast "];
+    let wordIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const speed = 100;
+    const delayBetweenWords = 1500;
+
+    function typeEffect() {
+        const span = document.querySelector(".typing-text span");
+        const currentWord = words[wordIndex];
+        if (isDeleting) {
+            span.textContent = currentWord.substring(0, charIndex--);
+        } else {
+            span.textContent = currentWord.substring(0, charIndex++);
+        }
+
+        if (!isDeleting && charIndex === currentWord.length) {
+            isDeleting = true;
+            setTimeout(typeEffect, delayBetweenWords);
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            wordIndex = (wordIndex + 1) % words.length;
+            setTimeout(typeEffect, speed);
+        } else {
+            setTimeout(typeEffect, isDeleting ? speed / 2 : speed);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", typeEffect);
+</script>
 <body>
     <header>
         <a href="#" class="logo">Lenny</a>
