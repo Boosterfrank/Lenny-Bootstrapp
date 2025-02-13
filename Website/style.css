@@ -132,6 +132,12 @@ span{
 
 .home-img{
     border-radius: 100%;
+    transition: 0.5s ease;
+}
+
+.home-img:hover{
+    transform: scale(1.2);
+    transition: 0.5s ease;
 }
 
 .home-img img{
@@ -226,16 +232,16 @@ span{
 
 @keyframes words{
     0%, 24%{
-        content: "Safe";
+        content: "";
     }
     25%, 49%{
-        content: "Free";
+        content: "";
     }
     50%, 74%{
-        content: "Simple";
+        content: "";
     }
     75%, 100%{
-        content: "Fast";
+        content: "";
     }
 }
 
