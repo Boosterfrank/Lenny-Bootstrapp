@@ -208,7 +208,7 @@ span{
 }
 
 .typing-text span::before{
-    content: "software Developer";
+    content: "The Best";
     color: #0059ff;
     animation: words 12s infinite;
 }
