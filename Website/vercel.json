@@ -3,10 +3,7 @@
     {
       "src": "/rocket",
       "status": 302,
-      "headers": {
-        "Content-Disposition": "attachment; filename=\"rocket.zip\""
-      },
-      "location": "https://github.com/Boosterfrank/Rocket/releases/latest/download/rocket.zip"
+      "destination": "https://github.com/Boosterfrank/Rocket/releases/latest/download/rocket.zip"
     }
   ]
 }
