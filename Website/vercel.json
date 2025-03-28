@@ -1,9 +1,0 @@
-{
-  "routes": [
-    {
-      "src": "/rocket",
-      "status": 302,
-      "destination": "https://github.com/Boosterfrank/Rocket/releases/latest/download/rocket.zip"
-    }
-  ]
-}
