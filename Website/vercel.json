@@ -2,10 +2,11 @@
   "routes": [
     {
       "src": "/rocket",
+      "status": 302,
       "headers": {
         "Content-Disposition": "attachment; filename=\"rocket.zip\""
       },
-      "dest": "/rocket.zip"
+      "location": "https://github.com/Boosterfrank/Rocket/releases/latest/download/rocket.zip"
     }
   ]
 }
