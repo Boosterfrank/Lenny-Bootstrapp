@@ -25,7 +25,8 @@ html, body {
 .small-text-container {
   z-index: 100;
   width: 100vw;
-  height: 110vh;
+  height: 100vh;
+  margin-top: 10;
   display: flex;
   position: absolute;
   top: 0;
