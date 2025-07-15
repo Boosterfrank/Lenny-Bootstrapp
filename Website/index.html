@@ -1,65 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-    
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <title>Lenny</title>
-</head>
-<script>
-    const words = ["Safe ", "Free ", "Simple ", "Fast "];
-    let wordIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-    const speed = 100;
-    const delayBetweenWords = 1500;
-
-    function typeEffect() {
-        const span = document.querySelector(".typing-text span");
-        const currentWord = words[wordIndex];
-        if (isDeleting) {
-            span.textContent = currentWord.substring(0, charIndex--);
-        } else {
-            span.textContent = currentWord.substring(0, charIndex++);
-        }
-
-        if (!isDeleting && charIndex === currentWord.length) {
-            isDeleting = true;
-            setTimeout(typeEffect, delayBetweenWords);
-        } else if (isDeleting && charIndex === 0) {
-            isDeleting = false;
-            wordIndex = (wordIndex + 1) % words.length;
-            setTimeout(typeEffect, speed);
-        } else {
-            setTimeout(typeEffect, isDeleting ? speed / 2 : speed);
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", typeEffect);
-</script>
-<body>
-    <header>
-        <a href="https://lennyhub.vercel.app" class="logo">Lenny</a>
-
-        <nav>
-            <a href="" >Home</a>
-        </nav>
-    </header>
-    <section class="home">
-        <div class="home-img">
-            <img src="main.jpg" alt="">
-        </div>
-        <div class="home-content">
-            <h1>This is <span>Lenny Executor</span></h1>
-            <h3 class="typing-text">It's <span></span></h3>
-            <p>Made By Boosterfrank, Lenny is a powerful and user-friendly Roblox executor designed to enhance your gaming experience. With Lenny, you can run custom scripts and unlock a wide range of features to gain an edge in your favorite Roblox games.</p>
-            <div class="social-icons">
-                <a href="https://discord.gg/VBtpq9pxc8"><i class="fa-brands fa-discord"></i></a>
-            </div>
-           <a href="https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/latest" class="btn">Download</a> <!--the # is the download link-->
-        </div>
-    </section>
-</body>
-</html>
+<div class="text-container">
+  Bubbles
+</div>
+<div class="gradient-bg">
+  <svg xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="goo">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
+        <feBlend in="SourceGraphic" in2="goo" />
+      </filter>
+    </defs>
+  </svg>
+  <div class="gradients-container">
+    <div class="g1"></div>
+    <div class="g2"></div>
+    <div class="g3"></div>
+    <div class="g4"></div>
+    <div class="g5"></div>
+    <div class="interactive"></div>
+  </div>
+</div>
