@@ -17,11 +17,8 @@ html, body {
   font-size: 96px;
   color: white;
   opacity: 0.8;
-  -webkit-user-select: none;
-    -moz-user-select: none;
-      -ms-user-select: none;
-        user-select: none;
-  text-shadow: 1px 1px rgba(0, 0, 0, 0.1);
+  user-select: none;
+  text-shadow: 1px 1px rgba(0,0,0,0.1);
 }
 
 .small-text-container {
@@ -37,10 +34,7 @@ html, body {
   font-size: 47.5px;
   color: white;
   opacity: 0.7;
-  -webkit-user-select: none;
-   -moz-user-select: none;
-    -ms-user-select: none;
-      user-select: none;
+  user-select: none;
   text-shadow: 1px 1px rgba(0,0,0,0.1);
 }
 
