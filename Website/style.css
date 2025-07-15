@@ -24,7 +24,7 @@ html, body {
 .small-text-container {
   z-index: 100;
   width: 100vw;
-  height: 117.5vh;
+  height: 110vh;
   display: flex;
   position: absolute;
   top: 0;
