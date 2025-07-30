@@ -134,7 +134,7 @@
     const searchInput = document.getElementById('searchInput');
 
     async function loadApps() {
-      const res = await fetch('https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Website/mobile/ipa/Rocket%20App%20Source.json');
+      const res = await fetch('https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Rocket%20App%20Source.json');
       const data = await res.json();
       data.apps.forEach(app => {
         const appNameNoSpaces = app.name.toLowerCase().replace(/\s+/g, '');
