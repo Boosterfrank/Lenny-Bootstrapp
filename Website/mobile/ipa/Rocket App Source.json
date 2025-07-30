@@ -1,0 +1,173 @@
+{
+  "name": "Rocket App Source",
+  "subtitle": "",
+  "description": "",
+  "iconURL": "https://i.imgur.com/mXKDbia.png",
+  "website": "",
+  "patreonURL": "",
+  "tintColor": "#000000",
+  "featuredApps": [],
+  "apps": [
+    {
+      "name": "ESign",
+      "bundleIdentifier": "p3.xyz.yyyue.esign",
+      "marketplaceID": "",
+      "developerName": "",
+      "subtitle": "on-device IPA signing tool for iOS",
+      "localizedDescription": "",
+      "iconURL": "https://i.imgur.com/AxuAbl4.png",
+      "tintColor": "#4ca4f4",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/ESign_5.0.2_1753907331.ipa",
+          "size": 8100000,
+          "version": "5.0.2",
+          "buildVersion": null,
+          "date": "2025-07-30T20:58:00+02:00",
+          "localizedDescription": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSAppleMusicUsageDescription": "点允许，才能使用。",
+          "NSCameraUsageDescription": "授权后才能使用您的相机进行扫一扫",
+          "NSLocationWhenInUseUsageDescription": "开启定位服务，我们将根据您的位置,为您提供相关信息。在未经许可前不会开启定位服务，请放心使用。",
+          "NSPhotoLibraryAddUsageDescription": "授权后才能将图片保存到本地相册",
+          "NSPhotoLibraryUsageDescription": "授权后才能访问您的手机相册，您才能上传对应的图片",
+          "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you"
+        }
+      },
+      "patreon": {}
+    },
+    {
+      "name": "Flappy Bird",
+      "bundleIdentifier": "org.brandonplank.flappybird",
+      "marketplaceID": "",
+      "developerName": "",
+      "subtitle": "Original Flappy Bird",
+      "localizedDescription": "",
+      "iconURL": "https://i.imgur.com/9SgQpzC.png",
+      "tintColor": "#7ce49c",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/Flappy.Bird_4.3_1751637154.ipa",
+          "size": 2200000,
+          "version": "4.3",
+          "buildVersion": null,
+          "date": "2025-07-30T20:57:00+02:00",
+          "localizedDescription": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      },
+      "patreon": {}
+    },
+    {
+      "name": "OldOS",
+      "bundleIdentifier": "com.zurac.OldOS",
+      "marketplaceID": "",
+      "developerName": "",
+      "subtitle": "iOS 4 but in an app",
+      "localizedDescription": "",
+      "iconURL": "https://i.imgur.com/izR9l0Z.png",
+      "tintColor": "#000000",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/OldOS_1.0_1753907353.ipa",
+          "size": 84400000,
+          "version": "1.0",
+          "buildVersion": null,
+          "date": "2025-07-30T20:55:00+02:00",
+          "localizedDescription": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSAppleMusicUsageDescription": "To view, play, and experience your music in OldOS, please enable access to your music library. ",
+          "NSCameraUsageDescription": "To take photos in OldOS, please enable access to your camera.",
+          "NSContactsUsageDescription": "To view and manage your contacts in OldOS, please enable access to your contacts list.",
+          "NSLocationAlwaysAndWhenInUseUsageDescription": "To enable maps to work properly, and see your current wifi network in Settings, please enable access to your location. Then close and re-open the Maps app.",
+          "NSLocationAlwaysUsageDescription": "To enable maps to work properly, and see your current wifi network in Settings, please enable access to your location. Then close and re-open the Maps app.",
+          "NSLocationWhenInUseUsageDescription": "To enable maps to work properly, and see your current wifi network in Settings, please enable access to your location. Then close and re-open the Maps app.",
+          "NSMicrophoneUsageDescription": "To record your audio while filming a video in OldOS, please in enable microphone access.",
+          "NSPhotoLibraryAddUsageDescription": "To view, manage, and add photos to your photo library in OldOS, please enable access. Then close and re-open the Photos app.",
+          "NSPhotoLibraryUsageDescription": "To view, manage, and add photos to your photo library in OldOS, please enable access. Then close and re-open the Photos app."
+        }
+      },
+      "patreon": {}
+    },
+    {
+      "name": "Pocket Poster",
+      "bundleIdentifier": "com.lemin.Pocket-Poster",
+      "marketplaceID": "",
+      "developerName": "",
+      "subtitle": "Custom PosterBoard animated wallpapers for iOS 17.0+",
+      "localizedDescription": "",
+      "iconURL": "https://i.imgur.com/piCXQIR.png",
+      "tintColor": "#6156e2",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/Pocket.Poster_2.0_1751033137.ipa",
+          "size": 13600000,
+          "version": "2.0",
+          "buildVersion": null,
+          "date": "2025-07-30T20:52:00+02:00",
+          "localizedDescription": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      },
+      "patreon": {}
+    },
+    {
+      "name": "PojavLauncher",
+      "bundleIdentifier": "net.kdt.pojavlauncher",
+      "marketplaceID": "",
+      "developerName": "",
+      "subtitle": "Minecraft Java (JIT)",
+      "localizedDescription": "",
+      "iconURL": "https://i.imgur.com/IYwphJm.png",
+      "tintColor": "#b4745c",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/ESign_5.0.2_1753907331.ipa",
+          "size": 165500000,
+          "version": "3.0",
+          "buildVersion": null,
+          "date": "2025-07-30T20:45:00+02:00",
+          "localizedDescription": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSLocalNetworkUsageDescription": "PojavLauncher uses the local network to find and communicate with AltServer and LAN servers.",
+          "NSMicrophoneUsageDescription": "PojavLauncher uses the microphone to enable support for voice chat mods."
+        }
+      },
+      "patreon": {}
+    }
+  ],
+  "news": []
+}
