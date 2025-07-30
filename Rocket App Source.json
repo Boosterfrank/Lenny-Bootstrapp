@@ -33,15 +33,16 @@
       "appPermissions": {
         "entitlements": [],
         "privacy": {
-          "NSAppleMusicUsageDescription": "点允许，才能使用。",
-          "NSCameraUsageDescription": "授权后才能使用您的相机进行扫一扫",
-          "NSLocationWhenInUseUsageDescription": "开启定位服务，我们将根据您的位置,为您提供相关信息。在未经许可前不会开启定位服务，请放心使用。",
-          "NSPhotoLibraryAddUsageDescription": "授权后才能将图片保存到本地相册",
-          "NSPhotoLibraryUsageDescription": "授权后才能访问您的手机相册，您才能上传对应的图片",
+          "NSAppleMusicUsageDescription": "\u70b9\u5141\u8bb8\uff0c\u624d\u80fd\u4f7f\u7528\u3002",
+          "NSCameraUsageDescription": "\u6388\u6743\u540e\u624d\u80fd\u4f7f\u7528\u60a8\u7684\u76f8\u673a\u8fdb\u884c\u626b\u4e00\u626b",
+          "NSLocationWhenInUseUsageDescription": "\u5f00\u542f\u5b9a\u4f4d\u670d\u52a1\uff0c\u6211\u4eec\u5c06\u6839\u636e\u60a8\u7684\u4f4d\u7f6e,\u4e3a\u60a8\u63d0\u4f9b\u76f8\u5173\u4fe1\u606f\u3002\u5728\u672a\u7ecf\u8bb8\u53ef\u524d\u4e0d\u4f1a\u5f00\u542f\u5b9a\u4f4d\u670d\u52a1\uff0c\u8bf7\u653e\u5fc3\u4f7f\u7528\u3002",
+          "NSPhotoLibraryAddUsageDescription": "\u6388\u6743\u540e\u624d\u80fd\u5c06\u56fe\u7247\u4fdd\u5b58\u5230\u672c\u5730\u76f8\u518c",
+          "NSPhotoLibraryUsageDescription": "\u6388\u6743\u540e\u624d\u80fd\u8bbf\u95ee\u60a8\u7684\u624b\u673a\u76f8\u518c\uff0c\u60a8\u624d\u80fd\u4e0a\u4f20\u5bf9\u5e94\u7684\u56fe\u7247",
           "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you"
         }
       },
-      "patreon": {}
+      "patreon": {},
+      "plistURL": "https://boosterfrank.vercel.app/plists/esign.plist"
     },
     {
       "name": "Flappy Bird",
@@ -69,7 +70,8 @@
         "entitlements": [],
         "privacy": {}
       },
-      "patreon": {}
+      "patreon": {},
+      "plistURL": "https://boosterfrank.vercel.app/plists/flappybird.plist"
     },
     {
       "name": "OldOS",
@@ -107,7 +109,8 @@
           "NSPhotoLibraryUsageDescription": "To view, manage, and add photos to your photo library in OldOS, please enable access. Then close and re-open the Photos app."
         }
       },
-      "patreon": {}
+      "patreon": {},
+      "plistURL": "https://boosterfrank.vercel.app/plists/oldos.plist"
     },
     {
       "name": "Pocket Poster",
@@ -135,7 +138,8 @@
         "entitlements": [],
         "privacy": {}
       },
-      "patreon": {}
+      "patreon": {},
+      "plistURL": "https://boosterfrank.vercel.app/plists/pocketposter.plist"
     },
     {
       "name": "PojavLauncher",
@@ -166,7 +170,8 @@
           "NSMicrophoneUsageDescription": "PojavLauncher uses the microphone to enable support for voice chat mods."
         }
       },
-      "patreon": {}
+      "patreon": {},
+      "plistURL": "https://boosterfrank.vercel.app/plists/pojavlauncher.plist"
     }
   ],
   "news": []
