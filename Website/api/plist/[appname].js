@@ -5,13 +5,13 @@ export default async function handler(req, res) {
     query: { appname }
   } = req;
 
-  const jsonUrl = 'https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Website/mobile/ipa/Rocket%20App%20Source.json';
+  const jsonUrl = 'https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json';
 
   try {
     const response = await fetch(jsonUrl);
     const data = await response.json();
 
-    const app = data.apps.find(a => 
+    const app = data.apps.find(a =>
       a.name.toLowerCase().replace(/\s+/g, '') === appname.toLowerCase()
     );
 
@@ -21,7 +21,8 @@ export default async function handler(req, res) {
     }
 
     const plist = `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
   <key>items</key>
@@ -51,9 +52,9 @@ export default async function handler(req, res) {
       <key>metadata</key>
       <dict>
         <key>bundle-identifier</key>
-        <string>${app.bundleIdentifier || 'com.example.placeholder'}</string>
+        <string>${app.bundleIdentifier || 'com.placeholder.app'}</string>
         <key>bundle-version</key>
-        <string>${app.versions[0].version || '1.0.0'}</string>
+        <string>${app.versions[0].version || '1.0'}</string>
         <key>kind</key>
         <string>software</string>
         <key>title</key>
@@ -66,8 +67,8 @@ export default async function handler(req, res) {
 
     res.setHeader('Content-Type', 'application/xml');
     res.status(200).send(plist);
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     res.status(500).send('Internal server error');
   }
 }
