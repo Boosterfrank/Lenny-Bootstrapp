@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rocket Services</title>
-  <link rel="icon" href="https://raw.githubusercontent.com/Boosterfrank/Rocket/refs/heads/main/Rocket%20Website/Rocket%20Logo.svg" type="image/svg+xml" />
+  <link rel="icon" href="https://raw.githubusercontent.com/Boosterfrank/Rocket/refs/heads/main/Rocket%20Website/Rocket%20Logo.svg" type="image/svg+xml">
   <style>
     body {
       background-color: #000;
@@ -113,7 +113,6 @@
   <div class="header">
     <span>Rocket</span>&nbsp;App Library
   </div>
-
   <div class="search-container">
     <div class="search-wrapper">
       <svg viewBox="0 0 24 24">
@@ -122,38 +121,32 @@
       <input type="text" id="searchInput" placeholder="Search by app name" />
     </div>
   </div>
-
-  <div class="app-list" id="appList">
-    <!-- Injected app cards go here -->
-  </div>
-
+  <div class="app-list" id="appList"></div>
   <script>
     const appList = document.getElementById('appList');
     const searchInput = document.getElementById('searchInput');
 
-    const apps = [
-      {{"name":"Esign","subtitle":"IPA Signature Utility","iconURL":"https://example.com/icon.png","plist":"esign.plist"}},
-      {{"name":"Flappy Bird","subtitle":"Classic Game","iconURL":"https://example.com/icon.png","plist":"flappybird.plist"}},
-      {{"name":"OldOS","subtitle":"Retro UI","iconURL":"https://example.com/icon.png","plist":"oldos.plist"}}
-      // Add more apps as needed
-    ];
+    async function loadApps() {
+      const res = await fetch('https://boosterfrank.vercel.app/Rocket_App_Source_with_Plists.json');
+      const data = await res.json();
 
-    apps.forEach(app => {
-      const item = document.createElement('div');
-      item.className = 'app-item';
-      item.setAttribute('data-name', app.name);
-      item.innerHTML = `
-        <img src="${app.iconURL}" alt="${app.name}" />
-        <div class="app-details">
-          <div class="app-title">${app.name}</div>
-          <div class="app-subtitle">${app.subtitle}</div>
-        </div>
-        <a href="itms-services://?action=download-manifest&url=https://boosterfrank.vercel.app/plists/${app.plist}">
-          <button class="get-button">Get</button>
-        </a>
-      `;
-      appList.appendChild(item);
-    });
+      data.apps.forEach(app => {
+        const item = document.createElement('div');
+        item.className = 'app-item';
+        item.setAttribute('data-name', app.name);
+        item.innerHTML = `
+          <img src="${app.iconURL}" alt="${app.name}" />
+          <div class="app-details">
+            <div class="app-title">${app.name}</div>
+            <div class="app-subtitle">${app.subtitle}</div>
+          </div>
+          <a href="itms-services://?action=download-manifest&url=${app.plistURL}">
+            <button class="get-button">Get</button>
+          </a>
+        `;
+        appList.appendChild(item);
+      });
+    }
 
     searchInput.addEventListener('input', () => {
       const query = searchInput.value.toLowerCase();
@@ -162,6 +155,8 @@
         app.style.display = name.includes(query) ? 'flex' : 'none';
       });
     });
+
+    loadApps();
   </script>
 </body>
 </html>
