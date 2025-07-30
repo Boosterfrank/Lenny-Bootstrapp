@@ -5,10 +5,17 @@ export default async function handler(req, res) {
     query: { appname }
   } = req;
 
+  console.log("Requested plist for app:", appname);
+
   const jsonUrl = 'https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json';
 
   try {
     const response = await fetch(jsonUrl);
+    if (!response.ok) {
+      console.error("Failed to fetch JSON:", response.statusText);
+      return res.status(500).send('Error fetching app data.');
+    }
+
     const data = await response.json();
 
     const app = data.apps.find(a =>
@@ -16,8 +23,8 @@ export default async function handler(req, res) {
     );
 
     if (!app) {
-      res.status(404).send('App not found');
-      return;
+      console.warn("App not found in JSON for:", appname);
+      return res.status(404).send('App not found');
     }
 
     const plist = `<?xml version="1.0" encoding="UTF-8"?>
@@ -52,9 +59,9 @@ export default async function handler(req, res) {
       <key>metadata</key>
       <dict>
         <key>bundle-identifier</key>
-        <string>${app.bundleIdentifier || 'com.placeholder.app'}</string>
+        <string>${app.bundleIdentifier}</string>
         <key>bundle-version</key>
-        <string>${app.versions[0].version || '1.0'}</string>
+        <string>${app.versions[0].version}</string>
         <key>kind</key>
         <string>software</string>
         <key>title</key>
@@ -68,7 +75,7 @@ export default async function handler(req, res) {
     res.setHeader('Content-Type', 'application/xml');
     res.status(200).send(plist);
   } catch (err) {
-    console.error(err);
+    console.error("Unhandled error:", err);
     res.status(500).send('Internal server error');
   }
 }
