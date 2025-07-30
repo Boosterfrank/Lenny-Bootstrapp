@@ -127,7 +127,7 @@
     const searchInput = document.getElementById('searchInput');
 
     async function loadApps() {
-      const res = await fetch('https://boosterfrank.vercel.app/Rocket_App_Source_with_Plists.json');
+      const res = await fetch('https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json');
       const data = await res.json();
 
       data.apps.forEach(app => {
