@@ -66,16 +66,6 @@
       background: #222;
       color: white;
     }
-    .refresh-indicator {
-      display: none;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem 0;
-    }
-    .refresh-indicator img {
-      width: 36px;
-      height: 36px;
-    }
     .app-list {
       display: flex;
       flex-direction: column;
@@ -139,11 +129,6 @@
       background-color: #555;
       cursor: default;
     }
-    .spinner {
-      width: 24px;
-      height: 24px;
-      fill: white;
-    }
   </style>
 </head>
 <body>
@@ -158,47 +143,10 @@
       <input type="text" id="searchInput" placeholder="Search by app name" />
     </div>
   </div>
-  <div class="refresh-indicator" id="refreshIndicator">
-    <svg class="spinner" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="50" r="45" stroke="white" stroke-width="10" fill="none" stroke-linecap="round">
-        <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50" keyTimes="0;1"/>
-      </circle>
-    </svg>
-  </div>
   <div class="app-list" id="appList"></div>
   <script>
     const appList = document.getElementById('appList');
     const searchInput = document.getElementById('searchInput');
-    const refreshIndicator = document.getElementById('refreshIndicator');
-
-    let startY = 0;
-    let isPulling = false;
-
-    document.body.addEventListener('touchstart', (e) => {
-      if (window.scrollY === 0) {
-        startY = e.touches[0].clientY;
-        isPulling = true;
-      }
-    });
-
-    document.body.addEventListener('touchmove', (e) => {
-      if (isPulling && e.touches[0].clientY - startY > 100) {
-        isPulling = false;
-        refreshApps();
-      }
-    });
-
-    function clearApps() {
-      appList.innerHTML = '';
-    }
-
-    async function refreshApps() {
-      refreshIndicator.style.display = 'flex';
-      clearApps();
-      await new Promise(resolve => setTimeout(resolve, 500));
-      await loadApps();
-      refreshIndicator.style.display = 'none';
-    }
 
     async function loadApps() {
       const res = await fetch('https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json');
@@ -216,23 +164,10 @@
         button.className = 'get-button';
         button.textContent = 'Get';
         button.onclick = () => {
-          const spinner = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-          spinner.setAttribute("class", "spinner");
-          spinner.setAttribute("viewBox", "0 0 100 100");
-          spinner.innerHTML = `
-            <circle cx="50" cy="50" r="45" stroke="white" stroke-width="10" fill="none" stroke-linecap="round">
-              <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50" keyTimes="0;1"/>
-            </circle>
-          `;
-          button.replaceWith(spinner);
-
-          setTimeout(() => {
-            spinner.replaceWith(button);
-            window.location.href = `itms-services://?action=download-manifest&url=${app.plistURL}`;
-            button.textContent = 'Installed';
-            button.classList.add('installed');
-            button.disabled = true;
-          }, 5000);
+          button.textContent = 'Installing...';
+          button.disabled = true;
+          button.classList.add('installed');
+          window.location.href = `itms-services://?action=download-manifest&url=${app.plistURL}`;
         };
 
         item.innerHTML = `
