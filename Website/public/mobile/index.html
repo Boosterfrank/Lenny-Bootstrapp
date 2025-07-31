@@ -13,6 +13,7 @@
       margin: 0;
       padding: 0;
       overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
     }
     .header {
       display: flex;
@@ -93,6 +94,10 @@
       font-size: 0.9rem;
       color: #aaa;
     }
+    .app-version {
+      font-size: 0.8rem;
+      color: #666;
+    }
     .get-button {
       align-self: center;
       background-color: #2d7efb;
@@ -126,11 +131,40 @@
     const appList = document.getElementById('appList');
     const searchInput = document.getElementById('searchInput');
 
+    let startY = 0;
+    let isPulling = false;
+
+    document.body.addEventListener('touchstart', (e) => {
+      if (window.scrollY === 0) {
+        startY = e.touches[0].clientY;
+        isPulling = true;
+      }
+    });
+
+    document.body.addEventListener('touchmove', (e) => {
+      if (isPulling && e.touches[0].clientY - startY > 100) {
+        isPulling = false;
+        refreshApps();
+      }
+    });
+
+    function clearApps() {
+      appList.innerHTML = '';
+    }
+
+    async function refreshApps() {
+      clearApps();
+      await loadApps();
+    }
+
     async function loadApps() {
       const res = await fetch('https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json');
       const data = await res.json();
 
       data.apps.forEach(app => {
+        const version = app.versions?.[0]?.version || "1.0.0";
+        const sizeMB = app.versions?.[0]?.size ? (app.versions[0].size / 1_000_000).toFixed(1) + ' MB' : '';
+
         const item = document.createElement('div');
         item.className = 'app-item';
         item.setAttribute('data-name', app.name);
@@ -139,6 +173,7 @@
           <div class="app-details">
             <div class="app-title">${app.name}</div>
             <div class="app-subtitle">${app.subtitle}</div>
+            <div class="app-version">v${version}${sizeMB ? ' • ' + sizeMB : ''}</div>
           </div>
           <a href="itms-services://?action=download-manifest&url=${app.plistURL}">
             <button class="get-button">Get</button>
