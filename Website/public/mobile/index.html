@@ -139,6 +139,10 @@
       background-color: #555;
       cursor: default;
     }
+    .spinner {
+      width: 24px;
+      height: 24px;
+    }
   </style>
 </head>
 <body>
@@ -207,10 +211,19 @@
         button.className = 'get-button';
         button.textContent = 'Get';
         button.onclick = () => {
-          window.location.href = `itms-services://?action=download-manifest&url=${app.plistURL}`;
-          button.textContent = 'Installed';
-          button.classList.add('installed');
-          button.disabled = true;
+          const spinner = document.createElement('img');
+          spinner.src = '180-ring.svg';
+          spinner.alt = 'Installing...';
+          spinner.className = 'spinner';
+          button.replaceWith(spinner);
+
+          setTimeout(() => {
+            spinner.replaceWith(button);
+            window.location.href = `itms-services://?action=download-manifest&url=${app.plistURL}`;
+            button.textContent = 'Installed';
+            button.classList.add('installed');
+            button.disabled = true;
+          }, 5000);
         };
 
         item.innerHTML = `
