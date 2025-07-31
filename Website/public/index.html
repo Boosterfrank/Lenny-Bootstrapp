@@ -1,44 +1,262 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Boosterfrank</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@700&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://public.codepenassets.com/css/reset-2.0.min.css">
-<link rel="stylesheet" href="./style.css">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rocket Services</title>
+  <link rel="icon" href="https://raw.githubusercontent.com/Boosterfrank/Rocket/refs/heads/main/Rocket%20Website/Rocket%20Logo.svg" type="image/svg+xml">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      width: 100%;
+    }
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-overflow-scrolling: touch;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      padding: 1rem;
+      background: #111;
+    }
+    .header span {
+      background: linear-gradient(to right, #ff4e50, #f9d423);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .search-container {
+      padding: 1rem;
+      background: #111;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .search-wrapper {
+      position: relative;
+      max-width: 100%;
+    }
+    .search-wrapper svg {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      fill: #888;
+      pointer-events: none;
+    }
+    .search-wrapper input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.8rem 1rem;
+      padding-left: 2.5rem;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      background: #222;
+      color: white;
+    }
+    .refresh-indicator {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem 0;
+    }
+    .refresh-indicator img {
+      width: 36px;
+      height: 36px;
+    }
+    .app-list {
+      display: flex;
+      flex-direction: column;
+      padding: 0 1rem;
+    }
+    .app-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1rem 0;
+      background: #1a1a1a;
+      padding: 1rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      overflow-x: hidden;
+    }
+    .app-item img {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      flex-shrink: 0;
+    }
+    .app-details {
+      flex: 1;
+      overflow: hidden;
+    }
+    .app-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .app-subtitle {
+      font-size: 0.9rem;
+      color: #aaa;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .app-version {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    .get-button {
+      align-self: center;
+      background-color: #2d7efb;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      flex-shrink: 0;
+    }
+    .get-button:active {
+      transform: scale(0.95);
+    }
+    .get-button.installed {
+      background-color: #555;
+      cursor: default;
+    }
+    .spinner {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+  </style>
 </head>
 <body>
-<!-- partial:index.partial.html -->
-<div class="text-container">
-  Boosterfrank
-</div>
-<div class="small-text-container">
-  just a website
-</div>
-<div class="gradient-bg">
-  <svg xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <filter id="goo">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
-        <feBlend in="SourceGraphic" in2="goo" />
-      </filter>
-    </defs>
-  </svg>
-  <div class="gradients-container">
-    <div class="g1"></div>
-    <div class="g2"></div>
-    <div class="g3"></div>
-    <div class="g4"></div>
-    <div class="g5"></div>
-    <div class="interactive"></div>
+  <div class="header">
+    <span>Rocket</span>&nbsp;App Library
   </div>
-</div>
-<!-- partial -->
-  <script  src="./script.js"></script>
+  <div class="search-container">
+    <div class="search-wrapper">
+      <svg viewBox="0 0 24 24">
+        <path d="M21.71 20.29l-3.388-3.387A8.943 8.943 0 0 0 19 11a9 9 0 1 0-9 9 8.943 8.943 0 0 0 5.903-1.678l3.387 3.388a1 1 0 0 0 1.414-1.414zM11 18a7 7 0 1 1 7-7 7.008 7.008 0 0 1-7 7z"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="Search by app name" />
+    </div>
+  </div>
+  <div class="refresh-indicator" id="refreshIndicator">
+    <svg class="spinner" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="45" stroke="white" stroke-width="10" fill="none" stroke-linecap="round">
+        <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50" keyTimes="0;1"/>
+      </circle>
+    </svg>
+  </div>
+  <div class="app-list" id="appList"></div>
+  <script>
+    const appList = document.getElementById('appList');
+    const searchInput = document.getElementById('searchInput');
+    const refreshIndicator = document.getElementById('refreshIndicator');
 
+    let startY = 0;
+    let isPulling = false;
+
+    document.body.addEventListener('touchstart', (e) => {
+      if (window.scrollY === 0) {
+        startY = e.touches[0].clientY;
+        isPulling = true;
+      }
+    });
+
+    document.body.addEventListener('touchmove', (e) => {
+      if (isPulling && e.touches[0].clientY - startY > 100) {
+        isPulling = false;
+        refreshApps();
+      }
+    });
+
+    function clearApps() {
+      appList.innerHTML = '';
+    }
+
+    async function refreshApps() {
+      refreshIndicator.style.display = 'flex';
+      clearApps();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await loadApps();
+      refreshIndicator.style.display = 'none';
+    }
+
+    async function loadApps() {
+      const res = await fetch('https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json');
+      const data = await res.json();
+
+      data.apps.forEach(app => {
+        const version = app.versions?.[0]?.version || "1.0.0";
+        const sizeMB = app.versions?.[0]?.size ? (app.versions[0].size / 1_000_000).toFixed(1) + ' MB' : '';
+
+        const item = document.createElement('div');
+        item.className = 'app-item';
+        item.setAttribute('data-name', app.name);
+
+        const button = document.createElement('button');
+        button.className = 'get-button';
+        button.textContent = 'Get';
+        button.onclick = () => {
+          const spinner = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          spinner.setAttribute("class", "spinner");
+          spinner.setAttribute("viewBox", "0 0 100 100");
+          spinner.innerHTML = `
+            <circle cx="50" cy="50" r="45" stroke="white" stroke-width="10" fill="none" stroke-linecap="round">
+              <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50" keyTimes="0;1"/>
+            </circle>
+          `;
+          button.replaceWith(spinner);
+
+          setTimeout(() => {
+            spinner.replaceWith(button);
+            window.location.href = `itms-services://?action=download-manifest&url=${app.plistURL}`;
+            button.textContent = 'Installed';
+            button.classList.add('installed');
+            button.disabled = true;
+          }, 5000);
+        };
+
+        item.innerHTML = `
+          <img src="${app.iconURL}" alt="${app.name}" />
+          <div class="app-details">
+            <div class="app-title">${app.name}</div>
+            <div class="app-subtitle">${app.subtitle}</div>
+            <div class="app-version">v${version}${sizeMB ? ' • ' + sizeMB : ''}</div>
+          </div>
+        `;
+        item.appendChild(button);
+        appList.appendChild(item);
+      });
+    }
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase();
+      document.querySelectorAll('.app-item').forEach(app => {
+        const name = app.getAttribute('data-name').toLowerCase();
+        app.style.display = name.includes(query) ? 'flex' : 'none';
+      });
+    });
+
+    loadApps();
+  </script>
 </body>
 </html>
