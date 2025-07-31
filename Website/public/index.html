@@ -165,7 +165,6 @@
         button.textContent = 'Get';
         button.onclick = () => {
           window.location.href = `itms-services://?action=download-manifest&url=${app.plistURL}`;
-          button.textContent = 'Installing...';
           button.disabled = true;
           button.classList.add('installed');
         };
