@@ -2,195 +2,127 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rocket Services</title>
-  <link rel="icon" href="https://raw.githubusercontent.com/Boosterfrank/Rocket/refs/heads/main/Rocket%20Website/Rocket%20Logo.svg" type="image/svg+xml">
+  <title>Bubbles</title>
   <style>
-    html, body {
+    /* CSS compiled from your SCSS file */
+    html,
+    body {
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
-      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+      font-family: sans-serif;
     }
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-overflow-scrolling: touch;
-    }
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-      padding: 1rem;
-      background: #111;
-    }
-    .header span {
-      background: linear-gradient(to right, #ff4e50, #f9d423);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .search-container {
-      padding: 1rem;
-      background: #111;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .search-wrapper {
-      position: relative;
-      max-width: 100%;
-    }
-    .search-wrapper svg {
+
+    .text-container {
       position: absolute;
-      left: 1rem;
       top: 50%;
-      transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
-      fill: #888;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      color: white;
+      font-size: 3rem;
       pointer-events: none;
     }
-    .search-wrapper input {
+
+    .gradient-bg {
       width: 100%;
-      box-sizing: border-box;
-      padding: 0.8rem 1rem;
-      padding-left: 2.5rem;
-      font-size: 1rem;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      background: #222;
-      color: white;
-    }
-    .app-list {
-      display: flex;
-      flex-direction: column;
-      padding: 0 1rem;
-    }
-    .app-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin: 1rem 0;
-      background: #1a1a1a;
-      padding: 1rem;
-      border-radius: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      overflow-x: hidden;
-    }
-    .app-item img {
-      width: 60px;
-      height: 60px;
-      border-radius: 15px;
-      flex-shrink: 0;
-    }
-    .app-details {
-      flex: 1;
+      height: 100%;
+      position: relative;
       overflow: hidden;
     }
-    .app-title {
-      font-weight: bold;
-      font-size: 1.1rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+
+    .gradient-bg svg {
+      display: none;
     }
-    .app-subtitle {
-      font-size: 0.9rem;
-      color: #aaa;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+
+    .gradients-container {
+      filter: url(#goo);
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
-    .app-version {
-      font-size: 0.8rem;
-      color: #666;
+
+    .gradients-container > div {
+      width: 30vw;
+      height: 30vw;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: move 30s ease-in-out infinite alternate;
     }
-    .get-button {
-      align-self: center;
-      background-color: #2d7efb;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 10px;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.1s ease;
-      flex-shrink: 0;
+
+    .g1 {
+      background: #ff5f6d;
+      animation-delay: 0s;
     }
-    .get-button:active {
-      transform: scale(0.95);
+
+    .g2 {
+      background: #ffc371;
+      animation-delay: 5s;
     }
-    .get-button.installed {
-      background-color: #555;
-      cursor: default;
+
+    .g3 {
+      background: #47cf73;
+      animation-delay: 10s;
+    }
+
+    .g4 {
+      background: #2bc0e4;
+      animation-delay: 15s;
+    }
+
+    .g5 {
+      background: #845ec2;
+      animation-delay: 20s;
+    }
+
+    .interactive {
+      background: white;
+      opacity: 0.1;
+    }
+
+    @keyframes move {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        transform: translate(calc(-50% + 100px), calc(-50% + 100px)) scale(1.5);
+      }
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <span>Rocket</span>&nbsp;App Library
+  <div class="text-container">
+    Bubbles
   </div>
-  <div class="search-container">
-    <div class="search-wrapper">
-      <svg viewBox="0 0 24 24">
-        <path d="M21.71 20.29l-3.388-3.387A8.943 8.943 0 0 0 19 11a9 9 0 1 0-9 9 8.943 8.943 0 0 0 5.903-1.678l3.387 3.388a1 1 0 0 0 1.414-1.414zM11 18a7 7 0 1 1 7-7 7.008 7.008 0 0 1-7 7z"/>
-      </svg>
-      <input type="text" id="searchInput" placeholder="Search by app name" />
+  <div class="gradient-bg">
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="goo">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+          <feColorMatrix in="blur" mode="matrix"
+            values="1 0 0 0 0  
+                    0 1 0 0 0  
+                    0 0 1 0 0  
+                    0 0 0 18 -8" result="goo" />
+          <feBlend in="SourceGraphic" in2="goo" />
+        </filter>
+      </defs>
+    </svg>
+    <div class="gradients-container">
+      <div class="g1"></div>
+      <div class="g2"></div>
+      <div class="g3"></div>
+      <div class="g4"></div>
+      <div class="g5"></div>
+      <div class="interactive"></div>
     </div>
   </div>
-  <div class="app-list" id="appList"></div>
-  <script>
-    const appList = document.getElementById('appList');
-    const searchInput = document.getElementById('searchInput');
-
-    async function loadApps() {
-      const res = await fetch('https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json');
-      const data = await res.json();
-
-      data.apps.forEach(app => {
-        const version = app.versions?.[0]?.version || "1.0.0";
-        const sizeMB = app.versions?.[0]?.size ? (app.versions[0].size / 1_000_000).toFixed(1) + ' MB' : '';
-
-        const item = document.createElement('div');
-        item.className = 'app-item';
-        item.setAttribute('data-name', app.name);
-
-        const button = document.createElement('button');
-        button.className = 'get-button';
-        button.textContent = 'Get';
-        button.onclick = () => {
-          window.location.href = `itms-services://?action=download-manifest&url=${app.plistURL}`;
-          button.disabled = true;
-          button.classList.add('installed');
-        };
-
-        item.innerHTML = `
-          <img src="${app.iconURL}" alt="${app.name}" />
-          <div class="app-details">
-            <div class="app-title">${app.name}</div>
-            <div class="app-subtitle">${app.subtitle}</div>
-            <div class="app-version">v${version}${sizeMB ? ' • ' + sizeMB : ''}</div>
-          </div>
-        `;
-        item.appendChild(button);
-        appList.appendChild(item);
-      });
-    }
-
-    searchInput.addEventListener('input', () => {
-      const query = searchInput.value.toLowerCase();
-      document.querySelectorAll('.app-item').forEach(app => {
-        const name = app.getAttribute('data-name').toLowerCase();
-        app.style.display = name.includes(query) ? 'flex' : 'none';
-      });
-    });
-
-    loadApps();
-  </script>
 </body>
 </html>
