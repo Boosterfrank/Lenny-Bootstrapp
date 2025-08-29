@@ -33,6 +33,23 @@
             text-shadow: 1px 1px rgba(0,0,0,0.1);
         }
 
+        .smallertext-container {
+            z-index: 100;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            position: absolute;
+            top: 0;
+            left: 0;
+            justify-content: center;
+            align-items: center;
+            font-size: 86px;
+            color: white;
+            opacity: 0.6;
+            user-select: none;
+            text-shadow: 1px 1px rgba(0,0,0,0.1);
+        }
+
         :root {
             --color-bg1: rgb(108, 0, 162);
             --color-bg2: rgb(0, 17, 82);
@@ -182,6 +199,8 @@
 <body>
     <div class="text-container">
         Boosterfrank
+    </div>
+    <div class="smallertext-container">
         Just a website
     </div>
     <div class="gradient-bg">
