@@ -1,8 +1,10 @@
 {
   "version": 2,
   "framework": null,
+  "builds": [
+    { "src": "public/**/*", "use": "@vercel/static" }
+  ],
   "routes": [
-    { "src": "^/mobile(?:/(.*))?$", "dest": "/Website/public/mobile/$1" },
-    { "src": "^(.*)$", "dest": "/Website/public$1" }
+    { "src": "/(.*)", "dest": "/public/$1" }
   ]
 }
