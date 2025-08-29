@@ -1,10 +1,8 @@
 {
   "version": 2,
-  "public": true,
-  "builds": [
-    { "src": "public/index.html", "use": "@vercel/static" },
-  ],
+  "framework": null,
   "routes": [
-    { "src": "/(.*)", "dest": "/public/$1" }
+    { "src": "^/mobile(?:/(.*))?$", "dest": "/Website/public/mobile/$1" },
+    { "src": "^(.*)$", "dest": "/Website/public$1" }
   ]
 }
