@@ -332,6 +332,7 @@
                 const user = result.user;
                 if (!user.displayName) {
                     await updateProfile(user, { displayName: username });
+                    userIdDisplay.textContent = username;
                 }
             } catch (error) {
                 console.error("Google sign-in failed:", error);
@@ -545,7 +546,7 @@
             });
         }
 
-        async function saveBlock(position, color, type = 'normal') {
+        async function saveBlock(position, color, type = 'normal', creatorName = null) {
             if (!currentLevelRef) {
                 console.error("Firestore reference not available.");
                 return;
@@ -554,7 +555,8 @@
                  await setDoc(doc(currentLevelRef), {
                     position: { x: position.x, y: position.y, z: position.z },
                     color: color,
-                    type: type
+                    type: type,
+                    creator: creatorName || 'Anonymous'
                 });
             } catch (e) {
                 console.error("Error adding document:", e);
@@ -620,6 +622,8 @@
             
             raycaster.setFromCamera(pointer, camera);
             
+            const creatorName = auth.currentUser.displayName || auth.currentUser.email;
+
             if (nextBlockType) {
                 const intersects = raycaster.intersectObjects(objects.concat(gridHelper), true);
                 if (intersects.length > 0) {
@@ -636,7 +640,7 @@
                         where('position.z', '==', newPosition.z));
                     const existingDocs = await getDocs(existingBlockQuery);
                     if (existingDocs.empty) {
-                        await saveBlock(newPosition, blockColor, nextBlockType);
+                        await saveBlock(newPosition, blockColor, nextBlockType, creatorName);
                         if (!noCooldown) {
                             lastBlockTime = now;
                             localStorage.setItem('lastBlockTime', now);
@@ -661,7 +665,7 @@
                         where('position.z', '==', newPosition.z));
                     const existingDocs = await getDocs(existingBlockQuery);
                     if (existingDocs.empty) {
-                        await saveBlock(newPosition, currentBlockColor, 'normal');
+                        await saveBlock(newPosition, currentBlockColor, 'normal', creatorName);
                         if (!noCooldown) {
                             lastBlockTime = now;
                             localStorage.setItem('lastBlockTime', now);
