@@ -297,13 +297,20 @@
                     db = getFirestore(app);
                     auth = getAuth(app);
                     currentLevelRef = collection(db, `artifacts/${appId}/public/data/levels`);
-                    setupFirestoreListener();
                     
                     onAuthStateChanged(auth, async (user) => {
                         if (user) {
                             userId = user.uid;
-                            const userName = user.displayName || user.email;
-                            userIdDisplay.textContent = userName;
+                            const userDocRef = doc(db, `artifacts/${appId}/users/${userId}`);
+                            const userDocSnap = await getDoc(userDocRef);
+                            
+                            if (userDocSnap.exists()) {
+                                const userData = userDocSnap.data();
+                                userIdDisplay.textContent = userData.username;
+                            } else {
+                                userIdDisplay.textContent = user.displayName || 'Anonymous';
+                            }
+                            
                             signInButton.classList.add('hidden');
                             usernameInput.classList.add('hidden');
                             startCooldownTimer();
@@ -318,6 +325,8 @@
                             adminPanel.classList.add('hidden');
                         }
                     });
+                    
+                    setupFirestoreListener();
                 } else {
                     console.error("Firebase config is missing.");
                     userIdDisplay.textContent = 'Config Missing';
@@ -349,12 +358,14 @@
             try {
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
-                if (!user.displayName) {
-                    await updateProfile(user, { displayName: username });
-                    userIdDisplay.textContent = username;
-                } else {
-                    userIdDisplay.textContent = user.displayName;
-                }
+                
+                await updateProfile(user, { displayName: username });
+                
+                const userDocRef = doc(db, `artifacts/${appId}/users/${user.uid}`);
+                await setDoc(userDocRef, { username: username, email: user.email });
+                
+                userIdDisplay.textContent = username;
+
                 signInButton.classList.add('hidden');
                 usernameInput.classList.add('hidden');
             } catch (error) {
