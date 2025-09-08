@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neodash Editor</title>
+    <title>Neodash Place</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
         
@@ -97,6 +97,15 @@
             padding: 0;
             box-sizing: border-box;
         }
+        #username-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            background-color: #333;
+            color: #fff;
+            box-sizing: border-box;
+        }
 
         #user-id-display {
             font-family: monospace;
@@ -173,7 +182,7 @@
     <div id="editor-container">
         <canvas id="three-canvas"></canvas>
         <div id="controls-panel">
-            <h1>Neodash Editor</h1>
+            <h1>Neodash Place</h1>
             <p><strong>User:</strong> <span id="user-id-display">Not signed in</span></p>
             <button id="sign-in-button">Sign In with Google</button>
             <div id="instructions">
@@ -198,6 +207,9 @@
             </select>
             
             <p id="cooldown-message">Ready!</p>
+
+            <label for="username-input">Username</label>
+            <input type="text" id="username-input" placeholder="Enter your username" required>
             
             <div id="admin-panel" class="hidden">
                 <h2>Admin Panel</h2>
@@ -206,6 +218,7 @@
                 <label for="cooldown-toggle">No Cooldown</label>
                 <input type="checkbox" id="cooldown-toggle">
                 <button id="reset-level-button">Reset Level</button>
+                <button id="sign-out-button">Sign Out</button>
             </div>
         </div>
     </div>
@@ -217,7 +230,7 @@
         import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
         import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, getDocs, writeBatch, query, where } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
         
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -236,7 +249,7 @@
         let userId = null;
         let currentLevelRef;
         const ADMIN_EMAIL = 'francobetancourt@gmail.com';
-        const COOLDOWN_TIME = 30000;
+        const COOLDOWN_TIME = 10000;
         let lastBlockTime = parseInt(localStorage.getItem('lastBlockTime') || 0);
         let countdownInterval;
         let noCooldown = false;
@@ -248,6 +261,8 @@
         const addStartBtn = document.getElementById('add-start-block-btn');
         const addEndBtn = document.getElementById('add-end-block-btn');
         const cooldownToggle = document.getElementById('cooldown-toggle');
+        const signOutButton = document.getElementById('sign-out-button');
+        const usernameInput = document.getElementById('username-input');
 
         const ENTIRE_SCENE_LAYER = 0;
         const GLOW_LAYER = 1;
@@ -268,9 +283,11 @@
                     onAuthStateChanged(auth, (user) => {
                         if (user) {
                             userId = user.uid;
-                            userIdDisplay.textContent = user.displayName || user.email || user.uid;
-                            signInButton.textContent = `Signed in as ${user.displayName || user.uid}`;
+                            const userName = user.displayName || user.email || user.uid;
+                            userIdDisplay.textContent = userName;
+                            signInButton.textContent = `Signed in as ${userName}`;
                             signInButton.disabled = true;
+                            usernameInput.classList.add('hidden');
                             startCooldownTimer();
                             if (user.email === ADMIN_EMAIL) {
                                 adminPanel.classList.remove('hidden');
@@ -280,6 +297,7 @@
                             userIdDisplay.textContent = 'Not signed in';
                             signInButton.textContent = 'Sign In with Google';
                             signInButton.disabled = false;
+                            usernameInput.classList.remove('hidden');
                             adminPanel.classList.add('hidden');
                         }
                     });
@@ -303,11 +321,34 @@
         }
 
         signInButton.addEventListener('click', async () => {
+            const username = usernameInput.value.trim();
+            if (!username) {
+                alert("Please enter a username.");
+                return;
+            }
+
             const provider = new GoogleAuthProvider();
             try {
-                await signInWithPopup(auth, provider);
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                if (!user.displayName) {
+                    await updateProfile(user, { displayName: username });
+                }
             } catch (error) {
                 console.error("Google sign-in failed:", error);
+                if (error.code === 'auth/popup-closed-by-user') {
+                    alert("Sign-in was canceled.");
+                } else {
+                    alert("An error occurred during sign-in. Check the console for details.");
+                }
+            }
+        });
+
+        signOutButton.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error("Sign out failed:", error);
             }
         });
 
@@ -586,11 +627,23 @@
                     const intersectionPoint = intersects[0].point;
                     const newPosition = new THREE.Vector3(
                         Math.round(intersectionPoint.x),
-                        Math.round(intersectionPoint.y + 0.5),
+                        Math.round(intersectionPoint.y),
                         Math.round(intersectionPoint.z)
                     );
                     const blockColor = nextBlockType === 'start' ? '#00ff00' : '#ff0000';
-                    await saveBlock(newPosition, blockColor, nextBlockType);
+                    const existingBlockQuery = query(currentLevelRef, 
+                        where('position.x', '==', newPosition.x),
+                        where('position.y', '==', newPosition.y),
+                        where('position.z', '==', newPosition.z));
+                    const existingDocs = await getDocs(existingBlockQuery);
+                    if (existingDocs.empty) {
+                        await saveBlock(newPosition, blockColor, nextBlockType);
+                        if (!noCooldown) {
+                            lastBlockTime = now;
+                            localStorage.setItem('lastBlockTime', now);
+                            startCooldownTimer();
+                        }
+                    }
                     nextBlockType = null;
                 }
             }
@@ -600,15 +653,22 @@
                     const intersectionPoint = intersects[0].point;
                     const newPosition = new THREE.Vector3(
                         Math.round(intersectionPoint.x),
-                        Math.round(intersectionPoint.y + 0.5),
+                        Math.round(intersectionPoint.y),
                         Math.round(intersectionPoint.z)
                     );
-                     await saveBlock(newPosition, currentBlockColor, 'normal');
-                     if (!noCooldown) {
-                        lastBlockTime = now;
-                        localStorage.setItem('lastBlockTime', now);
-                        startCooldownTimer();
-                     }
+                    const existingBlockQuery = query(currentLevelRef,
+                        where('position.x', '==', newPosition.x),
+                        where('position.y', '==', newPosition.y),
+                        where('position.z', '==', newPosition.z));
+                    const existingDocs = await getDocs(existingBlockQuery);
+                    if (existingDocs.empty) {
+                        await saveBlock(newPosition, currentBlockColor, 'normal');
+                        if (!noCooldown) {
+                            lastBlockTime = now;
+                            localStorage.setItem('lastBlockTime', now);
+                            startCooldownTimer();
+                        }
+                    }
                 }
             } else if (mode === 'delete') {
                 const intersects = raycaster.intersectObjects(objects, true);
