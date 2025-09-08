@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Level Editor</title>
+    <title>Neodash Level Editor</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
         
@@ -203,7 +203,7 @@
     <div id="editor-container">
         <canvas id="three-canvas"></canvas>
         <div id="controls-panel" class="hidden">
-            <h1>Level Editor</h1>
+            <h1>Editor</h1>
             <p><strong>User:</strong> <span id="user-id-display">Connecting...</span></p>
             <div id="instructions">
                 <h3>Controls</h3>
@@ -271,36 +271,39 @@
         const authOverlay = document.getElementById('auth-overlay');
         const controlsPanel = document.getElementById('controls-panel');
 
-        try {
-            if (Object.keys(firebaseConfig).length > 0) {
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-
-                const userIdDisplay = document.getElementById('user-id-display');
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        userIdDisplay.textContent = user.displayName || user.email || user.uid;
-                        authOverlay.classList.add('hidden');
-                        controlsPanel.classList.remove('hidden');
-                        currentLevelRef = collection(db, `artifacts/${appId}/public/data/levels`);
-                        setupFirestoreListener();
-                        startCooldownTimer();
-                    } else {
-                        userIdDisplay.textContent = 'Not signed in';
-                        authOverlay.classList.remove('hidden');
-                        controlsPanel.classList.add('hidden');
-                    }
-                });
-            } else {
-                console.error("Firebase config is missing. Firestore will not be available.");
-                document.getElementById('user-id-display').textContent = 'Config Missing';
+        function initFirebase() {
+            try {
+                if (Object.keys(firebaseConfig).length > 0) {
+                    app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+                    
+                    const userIdDisplay = document.getElementById('user-id-display');
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            userId = user.uid;
+                            userIdDisplay.textContent = user.displayName || user.email || user.uid;
+                            authOverlay.classList.add('hidden');
+                            controlsPanel.classList.remove('hidden');
+                            currentLevelRef = collection(db, `artifacts/${appId}/public/data/levels`);
+                            setupFirestoreListener();
+                            startCooldownTimer();
+                        } else {
+                            userIdDisplay.textContent = 'Not signed in';
+                            authOverlay.classList.remove('hidden');
+                            controlsPanel.classList.add('hidden');
+                        }
+                    });
+                } else {
+                    console.error("Firebase config is missing. Firestore will not be available.");
+                    document.getElementById('user-id-display').textContent = 'Config Missing';
+                }
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                document.getElementById('user-id-display').textContent = 'Init Failed';
             }
-        } catch (error) {
-            console.error("Firebase initialization failed:", error);
-            document.getElementById('user-id-display').textContent = 'Init Failed';
         }
+        initFirebase();
 
         signInButton.addEventListener('click', async () => {
             const provider = new GoogleAuthProvider();
