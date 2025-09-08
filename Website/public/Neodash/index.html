@@ -302,7 +302,7 @@
                     onAuthStateChanged(auth, async (user) => {
                         if (user) {
                             userId = user.uid;
-                            const userName = user.displayName || user.email || user.uid;
+                            const userName = user.displayName || user.email;
                             userIdDisplay.textContent = userName;
                             signInButton.classList.add('hidden');
                             usernameInput.classList.add('hidden');
