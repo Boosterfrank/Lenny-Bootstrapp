@@ -151,6 +151,21 @@
             padding-top: 15px;
             border-top: 2px solid #3a3a3a;
         }
+
+        .username-tag {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            font-size: 12px;
+            transition: opacity 2s ease-in-out;
+            opacity: 1;
+        }
+
+        .username-tag.fade-out {
+            opacity: 0;
+        }
         
         /* Responsive design for small screens */
         @media (max-width: 768px) {
@@ -171,6 +186,7 @@
                 "three/examples/jsm/postprocessing/EffectComposer.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/EffectComposer.js",
                 "three/examples/jsm/postprocessing/RenderPass.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/RenderPass.js",
                 "three/examples/jsm/postprocessing/UnrealBloomPass.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/UnrealBloomPass.js",
+                "three/examples/jsm/renderers/CSS2DRenderer.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/renderers/CSS2DRenderer.js",
                 "firebase/app": "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js",
                 "firebase/auth": "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js",
                 "firebase/firestore": "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js"
@@ -230,6 +246,7 @@
         import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
         import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
         import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+        import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, getDocs, writeBatch, query, where } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
@@ -244,7 +261,7 @@
             appId: "1:284936549356:web:101d286b27cb50fcf346c9",
             measurementId: "G-9WWYRLB5G1"
         };
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? initialAuthToken : null;
         
         let app, db, auth;
         let userId = null;
@@ -268,6 +285,7 @@
         const ENTIRE_SCENE_LAYER = 0;
         const GLOW_LAYER = 1;
         const glowObjects = [];
+        const usernameTags = [];
 
         let nextBlockType = null;
         const modeSelect = document.getElementById('mode-select');
@@ -281,7 +299,7 @@
                     currentLevelRef = collection(db, `artifacts/${appId}/public/data/levels`);
                     setupFirestoreListener();
                     
-                    onAuthStateChanged(auth, (user) => {
+                    onAuthStateChanged(auth, async (user) => {
                         if (user) {
                             userId = user.uid;
                             const userName = user.displayName || user.email || user.uid;
@@ -316,6 +334,7 @@
             const width = window.innerWidth;
             const height = window.innerHeight;
             renderer.setSize(width, height);
+            labelRenderer.setSize(width, height);
             animate(); 
         }
 
@@ -417,6 +436,13 @@
         renderer.setClearColor(0x1a1a1a);
         renderer.setPixelRatio(window.devicePixelRatio);
         
+        const labelRenderer = new CSS2DRenderer();
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        labelRenderer.domElement.style.position = 'absolute';
+        labelRenderer.domElement.style.top = '0px';
+        labelRenderer.domElement.style.pointerEvents = 'none';
+        document.body.appendChild(labelRenderer.domElement);
+
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
@@ -474,7 +500,28 @@
         finalComposer.addPass(new RenderPass(scene, camera));
         finalComposer.addPass(bloomPass);
 
-        function createBlock(position, color, docId, type = 'normal') {
+        function addUsernameTag(block, creatorName) {
+            const tagDiv = document.createElement('div');
+            tagDiv.className = 'username-tag';
+            tagDiv.textContent = creatorName;
+            
+            const tagLabel = new CSS2DObject(tagDiv);
+            tagLabel.position.copy(block.position);
+            tagLabel.position.y += 0.8;
+            scene.add(tagLabel);
+            usernameTags.push(tagLabel);
+
+            setTimeout(() => {
+                tagDiv.classList.add('fade-out');
+                setTimeout(() => {
+                    scene.remove(tagLabel);
+                    usernameTags.splice(usernameTags.indexOf(tagLabel), 1);
+                    tagLabel.element = null;
+                }, 2000);
+            }, 3000);
+        }
+
+        function createBlock(position, color, docId, type = 'normal', creatorName = null) {
             const geometry = new THREE.BoxGeometry(1, 1, 1);
             let material;
             if (type === 'start') {
@@ -487,12 +534,15 @@
 
             const block = new THREE.Mesh(geometry, material);
             block.position.copy(position);
-            block.userData = { id: docId, color: color, type: type };
+            block.userData = { id: docId, color: color, type: type, creator: creatorName };
             scene.add(block);
             objects.push(block);
 
             if (type === 'start' || type === 'end') {
                 block.layers.set(GLOW_LAYER);
+            }
+            if (creatorName) {
+                addUsernameTag(block, creatorName);
             }
         }
 
@@ -525,7 +575,7 @@
                         existingBlock.userData.type = item.type;
                     }
                 } else {
-                    createBlock(position, item.color, item.id, item.type);
+                    createBlock(position, item.color, item.id, item.type, item.creator);
                 }
             });
         }
@@ -591,6 +641,7 @@
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
             finalComposer.setSize(width, height);
+            labelRenderer.setSize(width, height);
         });
 
         window.addEventListener('pointerdown', (event) => {
@@ -695,6 +746,7 @@
             finalComposer.render();
             scene.traverse(restoreMaterial);
             renderer.render(scene, camera);
+            labelRenderer.render(scene, camera);
         }
     </script>
 </body>
