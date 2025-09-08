@@ -184,7 +184,11 @@
         <div id="controls-panel">
             <h1>Neodash Place</h1>
             <p><strong>User:</strong> <span id="user-id-display">Not signed in</span></p>
+            
+            <label for="username-input">Username</label>
+            <input type="text" id="username-input" placeholder="Enter your username" required>
             <button id="sign-in-button">Sign In with Google</button>
+
             <div id="instructions">
                 <h3>Controls</h3>
                 <ul>
@@ -207,9 +211,6 @@
             </select>
             
             <p id="cooldown-message">Ready!</p>
-
-            <label for="username-input">Username</label>
-            <input type="text" id="username-input" placeholder="Enter your username" required>
             
             <div id="admin-panel" class="hidden">
                 <h2>Admin Panel</h2>
@@ -285,8 +286,7 @@
                             userId = user.uid;
                             const userName = user.displayName || user.email || user.uid;
                             userIdDisplay.textContent = userName;
-                            signInButton.textContent = `Signed in as ${userName}`;
-                            signInButton.disabled = true;
+                            signInButton.classList.add('hidden');
                             usernameInput.classList.add('hidden');
                             startCooldownTimer();
                             if (user.email === ADMIN_EMAIL) {
@@ -295,8 +295,7 @@
                         } else {
                             userId = null;
                             userIdDisplay.textContent = 'Not signed in';
-                            signInButton.textContent = 'Sign In with Google';
-                            signInButton.disabled = false;
+                            signInButton.classList.remove('hidden');
                             usernameInput.classList.remove('hidden');
                             adminPanel.classList.add('hidden');
                         }
