@@ -396,7 +396,7 @@
         let mode = 'add';
         let currentBlockColor = '#ff9900';
         const objects = [];
-        const gridHelper = new THREE.GridHelper(200, 200, 0x444444, 0x222222);
+        const gridHelper = new THREE.GridHelper(100, 100, 0x444444, 0x222222);
         gridHelper.position.y = -0.01;
         scene.add(gridHelper);
 
@@ -583,24 +583,13 @@
             if (nextBlockType) {
                 const intersects = raycaster.intersectObjects(objects.concat(gridHelper), true);
                 if (intersects.length > 0) {
-                    let newPosition;
-                    const intersectedObject = intersects[0].object;
-                    if (intersectedObject === gridHelper) {
-                        const intersectionPoint = intersects[0].point;
-                        newPosition = new THREE.Vector3(
-                            Math.round(intersectionPoint.x),
-                            0.5,
-                            Math.round(intersectionPoint.z)
-                        );
-                    } else {
-                        const existingPosition = intersectedObject.position;
-                        newPosition = new THREE.Vector3(
-                            existingPosition.x,
-                            existingPosition.y + 1,
-                            existingPosition.z
-                        );
-                    }
-                    const blockColor = nextBlockType === 'start' ? '0x00ff00' : '0xff0000';
+                    const intersectionPoint = intersects[0].point;
+                    const newPosition = new THREE.Vector3(
+                        Math.round(intersectionPoint.x),
+                        Math.round(intersectionPoint.y + 0.5),
+                        Math.round(intersectionPoint.z)
+                    );
+                    const blockColor = nextBlockType === 'start' ? '#00ff00' : '#ff0000';
                     await saveBlock(newPosition, blockColor, nextBlockType);
                     nextBlockType = null;
                 }
@@ -608,24 +597,12 @@
             else if (mode === 'add') {
                 const intersects = raycaster.intersectObjects(objects.concat(gridHelper), true);
                 if (intersects.length > 0) {
-                    let newPosition;
-                    const intersectedObject = intersects[0].object;
-
-                    if (intersectedObject === gridHelper) {
-                        const intersectionPoint = intersects[0].point;
-                        newPosition = new THREE.Vector3(
-                            Math.round(intersectionPoint.x),
-                            0.5,
-                            Math.round(intersectionPoint.z)
-                        );
-                    } else {
-                        const existingPosition = intersectedObject.position;
-                        newPosition = new THREE.Vector3(
-                            existingPosition.x,
-                            existingPosition.y + 1,
-                            existingPosition.z
-                        );
-                    }
+                    const intersectionPoint = intersects[0].point;
+                    const newPosition = new THREE.Vector3(
+                        Math.round(intersectionPoint.x),
+                        Math.round(intersectionPoint.y + 0.5),
+                        Math.round(intersectionPoint.z)
+                    );
                      await saveBlock(newPosition, currentBlockColor, 'normal');
                      if (!noCooldown) {
                         lastBlockTime = now;
