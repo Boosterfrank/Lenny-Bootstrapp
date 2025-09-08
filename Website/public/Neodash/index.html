@@ -198,9 +198,6 @@
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-        import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-        import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-        import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, getDocs, writeBatch, query, where } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
@@ -264,8 +261,9 @@
             }
         }
         
+        initFirebase();
+        
         window.onload = function() {
-            initFirebase();
             // Initial sizing
             const width = window.innerWidth;
             const height = window.innerHeight;
