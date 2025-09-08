@@ -203,6 +203,8 @@
                 <h2>Admin Panel</h2>
                 <button id="add-start-block-btn">Add Start Block</button>
                 <button id="add-end-block-btn">Add End Block</button>
+                <label for="cooldown-toggle">No Cooldown</label>
+                <input type="checkbox" id="cooldown-toggle">
                 <button id="reset-level-button">Reset Level</button>
             </div>
         </div>
@@ -237,6 +239,7 @@
         const COOLDOWN_TIME = 30000;
         let lastBlockTime = parseInt(localStorage.getItem('lastBlockTime') || 0);
         let countdownInterval;
+        let noCooldown = false;
         const cooldownMessage = document.getElementById('cooldown-message');
         const signInButton = document.getElementById('sign-in-button');
         const userIdDisplay = document.getElementById('user-id-display');
@@ -244,6 +247,7 @@
         const resetLevelButton = document.getElementById('reset-level-button');
         const addStartBtn = document.getElementById('add-start-block-btn');
         const addEndBtn = document.getElementById('add-end-block-btn');
+        const cooldownToggle = document.getElementById('cooldown-toggle');
 
         const ENTIRE_SCENE_LAYER = 0;
         const GLOW_LAYER = 1;
@@ -334,11 +338,25 @@
             }
         });
 
+        cooldownToggle.addEventListener('change', (event) => {
+            noCooldown = event.target.checked;
+            if (noCooldown) {
+                cooldownMessage.textContent = 'No Cooldown';
+                clearInterval(countdownInterval);
+            } else {
+                startCooldownTimer();
+            }
+        });
+
         function startCooldownTimer() {
             if (countdownInterval) {
                 clearInterval(countdownInterval);
             }
             cooldownMessage.textContent = "Ready!";
+            if (noCooldown) {
+                cooldownMessage.textContent = "No Cooldown";
+                return;
+            }
             countdownInterval = setInterval(() => {
                 const now = Date.now();
                 const remainingTime = Math.max(0, COOLDOWN_TIME - (now - lastBlockTime));
@@ -488,10 +506,6 @@
         }
 
         async function saveBlock(position, color, type = 'normal') {
-            if (!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) {
-                console.warn("Only admin can place blocks.");
-                return;
-            }
             if (!currentLevelRef) {
                 console.error("Firestore reference not available.");
                 return;
@@ -508,10 +522,6 @@
         }
 
         async function deleteBlock(docId) {
-            if (!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) {
-                console.warn("Only admin can delete blocks.");
-                return;
-            }
             if (!currentLevelRef) {
                 console.error("Firestore reference not available.");
                 return;
@@ -560,7 +570,7 @@
 
             const isAdmin = auth.currentUser.email === ADMIN_EMAIL;
             const now = Date.now();
-            if (!isAdmin && (now - lastBlockTime < COOLDOWN_TIME)) {
+            if (!isAdmin && !noCooldown && (now - lastBlockTime < COOLDOWN_TIME)) {
                 console.warn(`Block placement on cooldown.`);
                 return;
             }
@@ -617,9 +627,9 @@
                         );
                     }
                      await saveBlock(newPosition, currentBlockColor, 'normal');
-                     if (!isAdmin) {
+                     if (!noCooldown) {
                         lastBlockTime = now;
-                        localStorage.setItem('lastBlockTime', lastBlockTime);
+                        localStorage.setItem('lastBlockTime', now);
                         startCooldownTimer();
                      }
                 }
@@ -628,9 +638,9 @@
                 if (intersects.length > 0) {
                     const block = intersects[0].object;
                     await deleteBlock(block.userData.id);
-                    if (!isAdmin) {
+                    if (!noCooldown) {
                         lastBlockTime = now;
-                        localStorage.setItem('lastBlockTime', lastBlockTime);
+                        localStorage.setItem('lastBlockTime', now);
                         startCooldownTimer();
                     }
                 }
