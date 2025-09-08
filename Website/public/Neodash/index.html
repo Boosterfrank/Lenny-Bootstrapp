@@ -218,7 +218,7 @@
         let userId = null;
         let currentLevelRef;
         const COOLDOWN_TIME = 30000;
-        let lastBlockTime = localStorage.getItem('lastBlockTime') || 0;
+        let lastBlockTime = parseInt(localStorage.getItem('lastBlockTime') || 0);
         let countdownInterval;
         const cooldownMessage = document.getElementById('cooldown-message');
         const signInButton = document.getElementById('sign-in-button');
@@ -280,7 +280,7 @@
             }
             cooldownMessage.textContent = "Ready!";
             countdownInterval = setInterval(() => {
-                const now = performance.now();
+                const now = Date.now();
                 const remainingTime = Math.max(0, COOLDOWN_TIME - (now - lastBlockTime));
                 if (remainingTime > 0) {
                     cooldownMessage.textContent = `Cooldown: ${Math.ceil(remainingTime / 1000)}s`;
@@ -466,7 +466,7 @@
                 return;
             }
 
-            const now = performance.now();
+            const now = Date.now();
             if (now - lastBlockTime < COOLDOWN_TIME) {
                 console.warn(`Block placement on cooldown.`);
                 return;
