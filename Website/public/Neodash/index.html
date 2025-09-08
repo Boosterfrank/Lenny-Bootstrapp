@@ -159,6 +159,9 @@
             "imports": {
                 "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js",
                 "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js",
+                "three/examples/jsm/postprocessing/EffectComposer.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/EffectComposer.js",
+                "three/examples/jsm/postprocessing/RenderPass.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/RenderPass.js",
+                "three/examples/jsm/postprocessing/UnrealBloomPass.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/UnrealBloomPass.js",
                 "firebase/app": "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js",
                 "firebase/auth": "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js",
                 "firebase/firestore": "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js"
@@ -198,7 +201,8 @@
             
             <div id="admin-panel" class="hidden">
                 <h2>Admin Panel</h2>
-                <p>Only visible to authorized users.</p>
+                <button id="add-start-block-btn">Add Start Block</button>
+                <button id="add-end-block-btn">Add End Block</button>
                 <button id="reset-level-button">Reset Level</button>
             </div>
         </div>
@@ -207,6 +211,9 @@
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+        import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, getDocs, writeBatch, query, where } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
@@ -235,6 +242,15 @@
         const userIdDisplay = document.getElementById('user-id-display');
         const adminPanel = document.getElementById('admin-panel');
         const resetLevelButton = document.getElementById('reset-level-button');
+        const addStartBtn = document.getElementById('add-start-block-btn');
+        const addEndBtn = document.getElementById('add-end-block-btn');
+
+        const ENTIRE_SCENE_LAYER = 0;
+        const GLOW_LAYER = 1;
+        const glowObjects = [];
+
+        let nextBlockType = null;
+        const modeSelect = document.getElementById('mode-select');
 
         function initFirebase() {
             try {
@@ -292,16 +308,28 @@
 
         resetLevelButton.addEventListener('click', async () => {
             if (auth.currentUser && auth.currentUser.email === ADMIN_EMAIL) {
-                console.log("Admin is resetting level.");
                 const batch = writeBatch(db);
                 const querySnapshot = await getDocs(currentLevelRef);
                 querySnapshot.docs.forEach((doc) => {
                     batch.delete(doc.ref);
                 });
                 await batch.commit();
-                console.log("Level reset complete.");
+            }
+        });
+
+        addStartBtn.addEventListener('click', () => {
+            if (auth.currentUser && auth.currentUser.email === ADMIN_EMAIL) {
+                nextBlockType = 'start';
             } else {
-                console.warn("Only administrators can reset the level.");
+                console.warn("Only admin can add special blocks.");
+            }
+        });
+
+        addEndBtn.addEventListener('click', () => {
+            if (auth.currentUser && auth.currentUser.email === ADMIN_EMAIL) {
+                nextBlockType = 'end';
+            } else {
+                console.warn("Only admin can add special blocks.");
             }
         });
 
@@ -362,14 +390,50 @@
         camera.position.set(20, 20, 20);
         camera.lookAt(0, 0, 0);
 
+        const BLOOM_SCENE = new THREE.Layers();
+        BLOOM_SCENE.set(GLOW_LAYER);
+        const darkMaterial = new THREE.MeshBasicMaterial({ color: 'black' });
+        const materials = {};
+
+        function darkenNonBloomed(obj) {
+            if (obj.isMesh && BLOOM_SCENE.test(obj.layers) === false) {
+                materials[obj.uuid] = obj.material;
+                obj.material = darkMaterial;
+            }
+        }
+        
+        function restoreMaterial(obj) {
+            if (materials[obj.uuid]) {
+                obj.material = materials[obj.uuid];
+                delete materials[obj.uuid];
+            }
+        }
+
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        const finalComposer = new EffectComposer(renderer);
+        finalComposer.addPass(new RenderPass(scene, camera));
+        finalComposer.addPass(bloomPass);
+
         function createBlock(position, color, docId, type = 'normal') {
             const geometry = new THREE.BoxGeometry(1, 1, 1);
-            let material = new THREE.MeshLambertMaterial({ color: new THREE.Color(color) });
+            let material;
+            if (type === 'start') {
+                material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            } else if (type === 'end') {
+                material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            } else {
+                material = new THREE.MeshLambertMaterial({ color: new THREE.Color(color) });
+            }
+
             const block = new THREE.Mesh(geometry, material);
             block.position.copy(position);
             block.userData = { id: docId, color: color, type: type };
             scene.add(block);
             objects.push(block);
+
+            if (type === 'start' || type === 'end') {
+                block.layers.set(GLOW_LAYER);
+            }
         }
 
         function removeBlock(block) {
@@ -455,7 +519,6 @@
             }
         }
 
-        const modeSelect = document.getElementById('mode-select');
         modeSelect.addEventListener('change', (event) => {
             mode = event.target.value;
         });
@@ -471,6 +534,7 @@
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
+            finalComposer.setSize(width, height);
         });
 
         window.addEventListener('pointerdown', (event) => {
@@ -490,8 +554,9 @@
                 return;
             }
 
+            const isAdmin = auth.currentUser.email === ADMIN_EMAIL;
             const now = Date.now();
-            if (now - lastBlockTime < COOLDOWN_TIME) {
+            if (!isAdmin && (now - lastBlockTime < COOLDOWN_TIME)) {
                 console.warn(`Block placement on cooldown.`);
                 return;
             }
@@ -501,7 +566,32 @@
             
             raycaster.setFromCamera(pointer, camera);
             
-            if (mode === 'add') {
+            if (nextBlockType) {
+                const intersects = raycaster.intersectObjects(objects.concat(gridHelper), true);
+                if (intersects.length > 0) {
+                    let newPosition;
+                    const intersectedObject = intersects[0].object;
+                    if (intersectedObject === gridHelper) {
+                        const intersectionPoint = intersects[0].point;
+                        newPosition = new THREE.Vector3(
+                            Math.round(intersectionPoint.x),
+                            0.5,
+                            Math.round(intersectionPoint.z)
+                        );
+                    } else {
+                        const existingPosition = intersectedObject.position;
+                        newPosition = new THREE.Vector3(
+                            existingPosition.x,
+                            existingPosition.y + 1,
+                            existingPosition.z
+                        );
+                    }
+                    const blockColor = nextBlockType === 'start' ? '0x00ff00' : '0xff0000';
+                    await saveBlock(newPosition, blockColor, nextBlockType);
+                    nextBlockType = null;
+                }
+            }
+            else if (mode === 'add') {
                 const intersects = raycaster.intersectObjects(objects.concat(gridHelper), true);
                 if (intersects.length > 0) {
                     let newPosition;
@@ -523,18 +613,22 @@
                         );
                     }
                      await saveBlock(newPosition, currentBlockColor, 'normal');
-                     lastBlockTime = now;
-                     localStorage.setItem('lastBlockTime', lastBlockTime);
-                     startCooldownTimer();
+                     if (!isAdmin) {
+                        lastBlockTime = now;
+                        localStorage.setItem('lastBlockTime', lastBlockTime);
+                        startCooldownTimer();
+                     }
                 }
             } else if (mode === 'delete') {
                 const intersects = raycaster.intersectObjects(objects, true);
                 if (intersects.length > 0) {
                     const block = intersects[0].object;
                     await deleteBlock(block.userData.id);
-                    lastBlockTime = now;
-                    localStorage.setItem('lastBlockTime', lastBlockTime);
-                    startCooldownTimer();
+                    if (!isAdmin) {
+                        lastBlockTime = now;
+                        localStorage.setItem('lastBlockTime', lastBlockTime);
+                        startCooldownTimer();
+                    }
                 }
             }
         });
@@ -542,6 +636,10 @@
         function animate() {
             requestAnimationFrame(animate);
             controls.update();
+
+            scene.traverse(darkenNonBloomed);
+            finalComposer.render();
+            scene.traverse(restoreMaterial);
             renderer.render(scene, camera);
         }
     </script>
