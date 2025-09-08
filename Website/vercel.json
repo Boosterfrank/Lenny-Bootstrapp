@@ -3,10 +3,12 @@
   "public": true,
   "builds": [
     { "src": "public/index.html", "use": "@vercel/static" },
-    { "src": "public/mobile/**/*", "use": "@vercel/static" }
+    { "src": "public/mobile/**/*", "use": "@vercel/static" },
+    { "src": "public/Neodash/**/*", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/mobile/(.*)", "dest": "/public/mobile/$1" },
+    { "src": "/Neodash/(.*)", "dest": "/public/Neodash/$1" },
     { "src": "/(.*)", "dest": "/public/$1" }
   ]
 }
