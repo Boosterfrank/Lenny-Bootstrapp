@@ -249,7 +249,7 @@
         import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, getDocs, writeBatch, query, where } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, getDocs, writeBatch, query, where, getDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
         
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = {
@@ -358,14 +358,13 @@
             try {
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
-                
+
                 await updateProfile(user, { displayName: username });
                 
                 const userDocRef = doc(db, `artifacts/${appId}/users/${user.uid}`);
                 await setDoc(userDocRef, { username: username, email: user.email });
                 
                 userIdDisplay.textContent = username;
-
                 signInButton.classList.add('hidden');
                 usernameInput.classList.add('hidden');
             } catch (error) {
@@ -682,13 +681,20 @@
                 console.warn(`Block placement on cooldown.`);
                 return;
             }
+            
+            const userDocRef = doc(db, `artifacts/${appId}/users/${auth.currentUser.uid}`);
+            const userDocSnap = await getDoc(userDocRef);
+            let creatorName;
+            if (userDocSnap.exists()) {
+                creatorName = userDocSnap.data().username;
+            } else {
+                creatorName = auth.currentUser.displayName || auth.currentUser.email;
+            }
 
             pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
             pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
             
             raycaster.setFromCamera(pointer, camera);
-            
-            const creatorName = auth.currentUser.displayName || usernameInput.value || auth.currentUser.email;
 
             if (nextBlockType) {
                 const intersects = raycaster.intersectObjects(objects.concat(gridHelper), true);
