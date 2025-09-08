@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Level Editor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #editor-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        #three-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 1;
+        }
+
+        #controls-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background-color: #2a2a2a;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            border-left: 2px solid #3a3a3a;
+            z-index: 2;
+        }
+
+        #auth-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 3;
+            color: white;
+            text-align: center;
+            gap: 20px;
+        }
+
+        #auth-overlay h2 {
+            font-size: 2em;
+        }
+
+        #auth-overlay button {
+            padding: 12px 24px;
+            font-size: 1.1em;
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #auth-overlay button:hover {
+            background-color: #357ae8;
+        }
+
+        .hidden {
+            display: none;
+        }
+        
+        h1, h2 {
+            margin-top: 0;
+            color: #fff;
+        }
+
+        p {
+            font-size: 0.9em;
+            color: #b0b0b0;
+            line-height: 1.5;
+        }
+        
+        button, select {
+            background-color: #4a4a4a;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        
+        button:hover, select:hover {
+            background-color: #5a5a5a;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+
+        #color-picker {
+            width: 100%;
+            height: 40px;
+            background-color: transparent;
+            border: 2px solid #555;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #user-id-display {
+            font-family: monospace;
+            font-size: 0.8em;
+            word-wrap: break-word;
+            padding: 10px;
+            background-color: #333;
+            border-radius: 8px;
+        }
+
+        #instructions {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        #instructions h3 {
+            margin-top: 0;
+            color: #ccc;
+        }
+        
+        #instructions ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        #instructions li {
+            font-size: 0.85em;
+            color: #b0b0b0;
+            margin-bottom: 5px;
+        }
+
+        .special-blocks-container {
+            border: 1px solid #444;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        #password-input {
+            background-color: #333;
+            border: 1px solid #555;
+            color: #eee;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        #password-message {
+            font-size: 0.85em;
+            text-align: center;
+        }
+
+        .unlocked-buttons {
+            display: none;
+        }
+
+        .unlocked-buttons.visible {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Responsive design for small screens */
+        @media (max-width: 768px) {
+            #controls-panel {
+                width: 100%;
+                height: auto;
+                max-height: 40vh;
+                border-left: none;
+                border-top: 2px solid #3a3a3a;
+            }
+        }
+    </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js",
+                "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js",
+                "three/examples/jsm/postprocessing/EffectComposer.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/EffectComposer.js",
+                "three/examples/jsm/postprocessing/RenderPass.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/RenderPass.js",
+                "three/examples/jsm/postprocessing/UnrealBloomPass.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/UnrealBloomPass.js",
+                "firebase/app": "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="editor-container">
+        <canvas id="three-canvas"></canvas>
+        <div id="controls-panel" class="hidden">
+            <h1>Level Editor</h1>
+            <p><strong>User:</strong> <span id="user-id-display">Connecting...</span></p>
+            <div id="instructions">
+                <h3>Controls</h3>
+                <ul>
+                    <li><strong>Click:</strong> Add a block (on grid) or select/delete (on block)</li>
+                    <li><strong>Hold Left Click + Drag:</strong> Rotate camera</li>
+                    <li><strong>Scroll Wheel:</strong> Zoom in/out</li>
+                    <li><strong>Right Click + Drag:</strong> Pan camera</li>
+                    <li><strong>Mobile Tap:</strong> Add a block (on grid) or select/delete (on block)</li>
+                    <li><strong>Mobile Two-Finger Drag:</strong> Rotate camera</li>
+                </ul>
+            </div>
+            
+            <label for="color-picker">Block Color</label>
+            <input type="color" id="color-picker" value="#ff9900">
+            
+            <label for="mode-select">Mode</label>
+            <select id="mode-select">
+                <option value="add">Add</option>
+                <option value="delete">Delete</option>
+            </select>
+            
+            <button id="reset-button">Reset Level</button>
+
+            <!-- Special Blocks Section -->
+            <div class="special-blocks-container">
+                <h2>Special Blocks</h2>
+                <p>Enter password to unlock.</p>
+                <input type="password" id="password-input" placeholder="Password...">
+                <button id="unlock-button">Unlock</button>
+                <p id="password-message"></p>
+
+                <div id="unlocked-buttons" class="unlocked-buttons">
+                    <button id="add-start-block">Add Start Block</button>
+                    <button id="add-end-block">Add End Block</button>
+                </div>
+            </div>
+            <p id="cooldown-message" style="text-align: center; color: yellow;"></p>
+        </div>
+        <div id="auth-overlay">
+            <h2>Sign in to begin editing.</h2>
+            <button id="sign-in-button">Sign In with Google</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+        import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, getDocs, writeBatch, query, where } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+        
+        console.log("Loading Firebase configuration...");
+
+        // Global variables provided by the environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9pOqfA96UhxRR5IhZoyy2qyZ2VWKIVEc",
+            authDomain: "neodash-level-editor.firebaseapp.com",
+            projectId: "neodash-level-editor",
+            storageBucket: "neodash-level-editor.firebasestorage.app",
+            messagingSenderId: "284936549356",
+            appId: "1:284936549356:web:101d286b27cb50fcf346c9",
+            measurementId: "G-9WWYRLB5G1"
+        };
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // Firebase initialization
+        let app, db, auth;
+        let userId = null;
+        let currentLevelRef;
+        let lastBlockTime = 0;
+        const cooldownMessage = document.getElementById('cooldown-message');
+        const COOLDOWN_TIME = 30000; // 30 seconds in milliseconds
+        const signInButton = document.getElementById('sign-in-button');
+        const authOverlay = document.getElementById('auth-overlay');
+        const controlsPanel = document.getElementById('controls-panel');
+
+        try {
+            if (Object.keys(firebaseConfig).length > 0) {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                const userIdDisplay = document.getElementById('user-id-display');
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        userIdDisplay.textContent = user.displayName || user.email || user.uid;
+                        authOverlay.classList.add('hidden');
+                        controlsPanel.classList.remove('hidden');
+                        currentLevelRef = collection(db, `artifacts/${appId}/public/data/levels`);
+                        setupFirestoreListener();
+                    } else {
+                        userIdDisplay.textContent = 'Not signed in';
+                        authOverlay.classList.remove('hidden');
+                        controlsPanel.classList.add('hidden');
+                    }
+                });
+            } else {
+                console.error("Firebase config is missing. Firestore will not be available.");
+                document.getElementById('user-id-display').textContent = 'Config Missing';
+            }
+        } catch (error) {
+            console.error("Firebase initialization failed:", error);
+            document.getElementById('user-id-display').textContent = 'Init Failed';
+        }
+
+        signInButton.addEventListener('click', async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+                console.log("Signed in with Google.");
+            } catch (error) {
+                console.error("Google sign-in failed:", error);
+            }
+        });
+        
+        // --- THREE.js Scene Setup ---
+        const canvas = document.getElementById('three-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer.setClearColor(0x1a1a1a);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.screenSpacePanning = true;
+
+        let isControlsActive = false;
+        let pointerDownTime = 0;
+        controls.addEventListener('start', () => { 
+            isControlsActive = true; 
+            console.log("Camera controls activated.");
+        });
+        controls.addEventListener('end', () => { 
+            isControlsActive = false; 
+            console.log("Camera controls deactivated.");
+        });
+
+        const raycaster = new THREE.Raycaster();
+        const pointer = new THREE.Vector2();
+        
+        let mode = 'add';
+        let currentBlockColor = '#ff9900';
+        const objects = []; // Keep track of all interactive objects
+        const gridHelper = new THREE.GridHelper(100, 100, 0x444444, 0x222222);
+        gridHelper.position.y = -0.01;
+        scene.add(gridHelper);
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 10, 7.5);
+        scene.add(directionalLight);
+
+        camera.position.set(20, 20, 20);
+        camera.lookAt(0, 0, 0);
+
+        // Post-processing for glow effect
+        const BLOOM_SCENE = 1;
+        const bloomLayer = new THREE.Layers();
+    
+        const darkMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const materials = {};
+
+        const renderPass = new RenderPass(scene, camera);
+
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        bloomPass.threshold = 0;
+        bloomPass.strength = 1.0;
+        bloomPass.radius = 0.5;
+
+        const finalComposer = new EffectComposer(renderer);
+        finalComposer.addPass(renderPass);
+        finalComposer.addPass(bloomPass);
+
+        // --- Block Creation & Deletion ---
+        function createBlock(position, color, docId, type = 'normal') {
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            let material = new THREE.MeshLambertMaterial({ color: new THREE.Color(color) });
+
+            if (type === 'start' || type === 'end') {
+                material = new THREE.MeshBasicMaterial({ color: new THREE.Color(color) });
+            }
+
+            const block = new THREE.Mesh(geometry, material);
+            block.position.copy(position);
+            block.userData = { id: docId, color: color, type: type };
+
+            if (type === 'start' || type === 'end') {
+                block.layers.enable(BLOOM_SCENE);
+            } else {
+                block.layers.disable(BLOOM_SCENE);
+            }
+
+            scene.add(block);
+            objects.push(block);
+        }
+
+        function removeBlock(block) {
+            scene.remove(block);
+            objects.splice(objects.indexOf(block), 1);
+            block.geometry.dispose();
+            block.material.dispose();
+        }
+
+        function updateSceneFromData(data) {
+            const oldObjects = [...objects];
+            const newObjectIds = new Set(data.map(item => item.id));
+
+            // Remove objects that are no longer in the data
+            oldObjects.forEach(obj => {
+                if (!newObjectIds.has(obj.userData.id)) {
+                    removeBlock(obj);
+                }
+            });
+
+            // Add or update objects from the new data
+            data.forEach(item => {
+                let existingBlock = objects.find(obj => obj.userData.id === item.id);
+                const position = new THREE.Vector3(item.position.x, item.position.y, item.position.z);
+                
+                if (existingBlock) {
+                    // Update position, color, and type if changed
+                    if (!existingBlock.position.equals(position)) {
+                        existingBlock.position.copy(position);
+                    }
+                    if (existingBlock.userData.color !== item.color || existingBlock.userData.type !== item.type) {
+                        existingBlock.material.color.set(item.color);
+                        existingBlock.userData.color = item.color;
+                        existingBlock.userData.type = item.type;
+                        if (item.type === 'start' || item.type === 'end') {
+                            existingBlock.layers.enable(BLOOM_SCENE);
+                            existingBlock.material.dispose();
+                            existingBlock.material = new THREE.MeshBasicMaterial({ color: new THREE.Color(item.color) });
+                        } else {
+                             existingBlock.layers.disable(BLOOM_SCENE);
+                             existingBlock.material.dispose();
+                             existingBlock.material = new THREE.MeshLambertMaterial({ color: new THREE.Color(item.color) });
+                        }
+                    }
+                } else {
+                    // Create new block
+                    createBlock(position, item.color, item.id, item.type);
+                }
+            });
+        }
+        
+        // --- Firestore Integration ---
+        function setupFirestoreListener() {
+            if (!currentLevelRef) return;
+            onSnapshot(currentLevelRef, (snapshot) => {
+                console.log("Receiving real-time updates from Firestore...");
+                const levelData = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                updateSceneFromData(levelData);
+            }, (error) => {
+                console.error("Firestore snapshot listener error:", error);
+            });
+        }
+
+        async function saveBlock(position, color, type = 'normal') {
+            if (!currentLevelRef) {
+                console.error("Firestore collection reference not available.");
+                return;
+            }
+
+            // Check if a block already exists at this exact position
+            try {
+                const q = query(currentLevelRef, 
+                    where("position.x", "==", position.x), 
+                    where("position.y", "==", position.y),
+                    where("position.z", "==", position.z)
+                );
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    console.warn("A block already exists at this position. Cannot place a new one.");
+                    return;
+                }
+            } catch (e) {
+                console.error("Error checking for existing block:", e);
+                return;
+            }
+
+            // Check if start/end blocks already exist
+            if (type === 'start' || type === 'end') {
+                const existingSpecialBlocks = objects.filter(obj => obj.userData.type === type);
+                if (existingSpecialBlocks.length > 0) {
+                    // Delete the existing special block before adding a new one
+                    await deleteBlock(existingSpecialBlocks[0].userData.id);
+                }
+            }
+
+            try {
+                await setDoc(doc(currentLevelRef), {
+                    position: { x: position.x, y: position.y, z: position.z },
+                    color: color,
+                    type: type
+                });
+                console.log(`Block added at (${position.x}, ${position.y}, ${position.z}) with color ${color}`);
+            } catch (e) {
+                console.error("Error adding document: ", e);
+            }
+        }
+
+        async function deleteBlock(docId) {
+            if (!currentLevelRef) {
+                console.error("Firestore collection reference not available.");
+                return;
+            }
+            try {
+                await deleteDoc(doc(currentLevelRef, docId));
+                console.log(`Block with ID ${docId} deleted.`);
+            } catch (e) {
+                console.error("Error deleting document: ", e);
+            }
+        }
+
+        async function resetLevel() {
+            if (!currentLevelRef) {
+                console.error("Firestore collection reference not available.");
+                return;
+            }
+            try {
+                const querySnapshot = await getDocs(currentLevelRef);
+                const batch = writeBatch(db);
+                querySnapshot.forEach((doc) => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+                console.log("Level has been reset.");
+            } catch (e) {
+                console.error("Error resetting level:", e);
+            }
+        }
+
+        // --- UI & Event Listeners ---
+        const passwordInput = document.getElementById('password-input');
+        const unlockButton = document.getElementById('unlock-button');
+        const passwordMessage = document.getElementById('password-message');
+        const unlockedButtons = document.getElementById('unlocked-buttons');
+        const addStartButton = document.getElementById('add-start-block');
+        const addEndButton = document.getElementById('add-end-block');
+        
+        const password = "mysecretpassword"; // The hardcoded password
+
+        unlockButton.addEventListener('click', () => {
+            if (passwordInput.value === password) {
+                passwordMessage.textContent = "Unlocked!";
+                passwordMessage.style.color = "#4CAF50";
+                unlockedButtons.classList.add('visible');
+            } else {
+                passwordMessage.textContent = "Incorrect password.";
+                passwordMessage.style.color = "#F44336";
+                unlockedButtons.classList.remove('visible');
+            }
+            passwordInput.value = '';
+        });
+
+        const modeSelect = document.getElementById('mode-select');
+        modeSelect.addEventListener('change', (event) => {
+            mode = event.target.value;
+            console.log(`Mode changed to: ${mode}`);
+        });
+
+        const colorPicker = document.getElementById('color-picker');
+        colorPicker.addEventListener('change', (event) => {
+            currentBlockColor = event.target.value;
+        });
+
+        const resetButton = document.getElementById('reset-button');
+        resetButton.addEventListener('click', () => {
+            resetLevel();
+        });
+
+        addStartButton.addEventListener('click', () => {
+            mode = 'add';
+            currentBlockColor = '#00FF00'; // Green
+            console.log("Switched to Add Start Block mode.");
+        });
+
+        addEndButton.addEventListener('click', () => {
+            mode = 'add';
+            currentBlockColor = '#FF0000'; // Red
+            console.log("Switched to Add End Block mode.");
+        });
+
+        window.addEventListener('resize', () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+            finalComposer.setSize(width, height);
+        });
+
+        window.addEventListener('pointerdown', (event) => {
+            pointerDownTime = performance.now();
+        });
+
+        window.addEventListener('pointerup', (event) => {
+            const duration = performance.now() - pointerDownTime;
+            const isClick = duration < 200 && !isControlsActive;
+            
+            if (!isClick) {
+                console.log("Interaction ignored: Not a quick click.");
+                return;
+            }
+
+            if (!auth.currentUser) {
+                console.warn("Please sign in to place blocks.");
+                cooldownMessage.textContent = "Please sign in to place blocks.";
+                setTimeout(() => cooldownMessage.textContent = "", 3000);
+                return;
+            }
+
+            const now = performance.now();
+            if (now - lastBlockTime < COOLDOWN_TIME) {
+                const remainingTime = Math.ceil((COOLDOWN_TIME - (now - lastBlockTime)) / 1000);
+                console.warn(`Block placement on cooldown. Please wait ${remainingTime} seconds.`);
+                cooldownMessage.textContent = `Cooldown: ${remainingTime}s`;
+                setTimeout(() => cooldownMessage.textContent = "", 3000);
+                return;
+            }
+
+            pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+            pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
+            
+            raycaster.setFromCamera(pointer, camera);
+            
+            if (mode === 'add') {
+                const intersects = raycaster.intersectObject(gridHelper);
+                if (intersects.length > 0) {
+                    const intersectionPoint = intersects[0].point;
+                    const position = new THREE.Vector3(
+                        Math.round(intersectionPoint.x),
+                        0.5,
+                        Math.round(intersectionPoint.z)
+                    );
+
+                    let blockType = 'normal';
+                    if (currentBlockColor === '#00FF00') blockType = 'start';
+                    if (currentBlockColor === '#FF0000') blockType = 'end';
+
+                    saveBlock(position, currentBlockColor, blockType);
+                    lastBlockTime = now;
+                }
+            } else if (mode === 'delete') {
+                const intersects = raycaster.intersectObjects(objects, true);
+                if (intersects.length > 0) {
+                    const block = intersects[0].object;
+                    deleteBlock(block.userData.id);
+                }
+            }
+        });
+        
+        // --- Animation Loop ---
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            
+            // 1. First, render the glowing objects only for the bloom effect
+            scene.traverse(function (obj) {
+                if (obj.isMesh && bloomLayer.test(obj.layers) === false) {
+                    materials[obj.uuid] = obj.material;
+                    obj.material = darkMaterial;
+                }
+            });
+            finalComposer.render();
+
+            // 2. Then, restore all materials for the normal scene render
+            scene.traverse(function (obj) {
+                if (materials[obj.uuid]) {
+                    obj.material = materials[obj.uuid];
+                    delete materials[obj.uuid];
+                }
+            });
+
+            // 3. Finally, render the full scene normally
+            renderer.render(scene, camera);
+        }
+
+        window.onload = function () {
+            // Initial sizing
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            renderer.setSize(width, height);
+            finalComposer.setSize(width, height);
+            // Start the animation on window load.
+            animate(); 
+        }
+
+    </script>
+</body>
+</html>
