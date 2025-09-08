@@ -136,6 +136,12 @@
             font-size: 1.1em;
             font-weight: bold;
         }
+
+        #admin-panel {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #3a3a3a;
+        }
         
         /* Responsive design for small screens */
         @media (max-width: 768px) {
@@ -189,6 +195,12 @@
             </select>
             
             <p id="cooldown-message">Ready!</p>
+            
+            <div id="admin-panel" class="hidden">
+                <h2>Admin Panel</h2>
+                <p>Only visible to authorized users.</p>
+                <button id="reset-level-button">Reset Level</button>
+            </div>
         </div>
     </div>
 
@@ -214,12 +226,15 @@
         let app, db, auth;
         let userId = null;
         let currentLevelRef;
+        const ADMIN_EMAIL = 'your-admin-email@example.com';
         const COOLDOWN_TIME = 30000;
         let lastBlockTime = parseInt(localStorage.getItem('lastBlockTime') || 0);
         let countdownInterval;
         const cooldownMessage = document.getElementById('cooldown-message');
         const signInButton = document.getElementById('sign-in-button');
         const userIdDisplay = document.getElementById('user-id-display');
+        const adminPanel = document.getElementById('admin-panel');
+        const resetLevelButton = document.getElementById('reset-level-button');
 
         function initFirebase() {
             try {
@@ -236,11 +251,15 @@
                             currentLevelRef = collection(db, `artifacts/${appId}/public/data/levels`);
                             setupFirestoreListener();
                             startCooldownTimer();
+                            if (user.email === ADMIN_EMAIL) {
+                                adminPanel.classList.remove('hidden');
+                            }
                         } else {
                             userId = null;
                             userIdDisplay.textContent = 'Not signed in';
                             signInButton.textContent = 'Sign In with Google';
                             signInButton.disabled = false;
+                            adminPanel.classList.add('hidden');
                         }
                     });
                 } else {
@@ -268,6 +287,21 @@
                 await signInWithPopup(auth, provider);
             } catch (error) {
                 console.error("Google sign-in failed:", error);
+            }
+        });
+
+        resetLevelButton.addEventListener('click', async () => {
+            if (auth.currentUser && auth.currentUser.email === ADMIN_EMAIL) {
+                console.log("Admin is resetting level.");
+                const batch = writeBatch(db);
+                const querySnapshot = await getDocs(currentLevelRef);
+                querySnapshot.docs.forEach((doc) => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+                console.log("Level reset complete.");
+            } else {
+                console.warn("Only administrators can reset the level.");
             }
         });
 
@@ -386,6 +420,10 @@
         }
 
         async function saveBlock(position, color, type = 'normal') {
+            if (!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) {
+                console.warn("Only admin can place blocks.");
+                return;
+            }
             if (!currentLevelRef) {
                 console.error("Firestore reference not available.");
                 return;
@@ -402,6 +440,10 @@
         }
 
         async function deleteBlock(docId) {
+            if (!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) {
+                console.warn("Only admin can delete blocks.");
+                return;
+            }
             if (!currentLevelRef) {
                 console.error("Firestore reference not available.");
                 return;
