@@ -352,7 +352,11 @@
                 if (!user.displayName) {
                     await updateProfile(user, { displayName: username });
                     userIdDisplay.textContent = username;
+                } else {
+                    userIdDisplay.textContent = user.displayName;
                 }
+                signInButton.classList.add('hidden');
+                usernameInput.classList.add('hidden');
             } catch (error) {
                 console.error("Google sign-in failed:", error);
                 if (error.code === 'auth/popup-closed-by-user') {
@@ -673,7 +677,7 @@
             
             raycaster.setFromCamera(pointer, camera);
             
-            const creatorName = auth.currentUser.displayName || auth.currentUser.email;
+            const creatorName = auth.currentUser.displayName || usernameInput.value || auth.currentUser.email;
 
             if (nextBlockType) {
                 const intersects = raycaster.intersectObjects(objects.concat(gridHelper), true);
