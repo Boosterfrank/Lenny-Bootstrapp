@@ -166,38 +166,13 @@
             margin-bottom: 5px;
         }
 
-        .special-blocks-container {
-            border: 1px solid #444;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        #cooldown-message {
+            text-align: center;
+            color: yellow;
+            font-size: 1.1em;
+            font-weight: bold;
         }
         
-        #password-input {
-            background-color: #333;
-            border: 1px solid #555;
-            color: #eee;
-            padding: 8px;
-            border-radius: 6px;
-        }
-
-        #password-message {
-            font-size: 0.85em;
-            text-align: center;
-        }
-
-        .unlocked-buttons {
-            display: none;
-        }
-
-        .unlocked-buttons.visible {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
         /* Responsive design for small screens */
         @media (max-width: 768px) {
             #controls-panel {
@@ -252,20 +227,6 @@
             </select>
             
             <button id="reset-button">Reset Level</button>
-
-            <!-- Special Blocks Section -->
-            <div class="special-blocks-container">
-                <h2>Special Blocks</h2>
-                <p>Enter password to unlock.</p>
-                <input type="password" id="password-input" placeholder="Password...">
-                <button id="unlock-button">Unlock</button>
-                <p id="password-message"></p>
-
-                <div id="unlocked-buttons" class="unlocked-buttons">
-                    <button id="add-start-block">Add Start Block</button>
-                    <button id="add-end-block">Add End Block</button>
-                </div>
-            </div>
             <p id="cooldown-message" style="text-align: center; color: yellow;"></p>
         </div>
         <div id="auth-overlay">
@@ -304,6 +265,7 @@
         let userId = null;
         let currentLevelRef;
         let lastBlockTime = 0;
+        let countdownInterval;
         const cooldownMessage = document.getElementById('cooldown-message');
         const COOLDOWN_TIME = 30000; // 30 seconds in milliseconds
         const signInButton = document.getElementById('sign-in-button');
@@ -325,6 +287,7 @@
                         controlsPanel.classList.remove('hidden');
                         currentLevelRef = collection(db, `artifacts/${appId}/public/data/levels`);
                         setupFirestoreListener();
+                        startCooldownTimer();
                     } else {
                         userIdDisplay.textContent = 'Not signed in';
                         authOverlay.classList.remove('hidden');
@@ -349,6 +312,24 @@
                 console.error("Google sign-in failed:", error);
             }
         });
+
+        // --- Cooldown Timer ---
+        function startCooldownTimer() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            lastBlockTime = 0; // Reset last block time to allow immediate placement after sign-in
+            countdownInterval = setInterval(() => {
+                const now = performance.now();
+                const remainingTime = Math.max(0, COOLDOWN_TIME - (now - lastBlockTime));
+                if (remainingTime > 0) {
+                    cooldownMessage.textContent = `Cooldown: ${Math.ceil(remainingTime / 1000)}s`;
+                } else {
+                    cooldownMessage.textContent = "Ready!";
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        }
         
         // --- THREE.js Scene Setup ---
         const canvas = document.getElementById('three-canvas');
@@ -522,15 +503,6 @@
                 return;
             }
 
-            // Check if start/end blocks already exist
-            if (type === 'start' || type === 'end') {
-                const existingSpecialBlocks = objects.filter(obj => obj.userData.type === type);
-                if (existingSpecialBlocks.length > 0) {
-                    // Delete the existing special block before adding a new one
-                    await deleteBlock(existingSpecialBlocks[0].userData.id);
-                }
-            }
-
             try {
                 await setDoc(doc(currentLevelRef), {
                     position: { x: position.x, y: position.y, z: position.z },
@@ -575,28 +547,6 @@
         }
 
         // --- UI & Event Listeners ---
-        const passwordInput = document.getElementById('password-input');
-        const unlockButton = document.getElementById('unlock-button');
-        const passwordMessage = document.getElementById('password-message');
-        const unlockedButtons = document.getElementById('unlocked-buttons');
-        const addStartButton = document.getElementById('add-start-block');
-        const addEndButton = document.getElementById('add-end-block');
-        
-        const password = "mysecretpassword"; // The hardcoded password
-
-        unlockButton.addEventListener('click', () => {
-            if (passwordInput.value === password) {
-                passwordMessage.textContent = "Unlocked!";
-                passwordMessage.style.color = "#4CAF50";
-                unlockedButtons.classList.add('visible');
-            } else {
-                passwordMessage.textContent = "Incorrect password.";
-                passwordMessage.style.color = "#F44336";
-                unlockedButtons.classList.remove('visible');
-            }
-            passwordInput.value = '';
-        });
-
         const modeSelect = document.getElementById('mode-select');
         modeSelect.addEventListener('change', (event) => {
             mode = event.target.value;
@@ -611,18 +561,7 @@
         const resetButton = document.getElementById('reset-button');
         resetButton.addEventListener('click', () => {
             resetLevel();
-        });
-
-        addStartButton.addEventListener('click', () => {
-            mode = 'add';
-            currentBlockColor = '#00FF00'; // Green
-            console.log("Switched to Add Start Block mode.");
-        });
-
-        addEndButton.addEventListener('click', () => {
-            mode = 'add';
-            currentBlockColor = '#FF0000'; // Red
-            console.log("Switched to Add End Block mode.");
+            startCooldownTimer();
         });
 
         window.addEventListener('resize', () => {
@@ -649,17 +588,12 @@
 
             if (!auth.currentUser) {
                 console.warn("Please sign in to place blocks.");
-                cooldownMessage.textContent = "Please sign in to place blocks.";
-                setTimeout(() => cooldownMessage.textContent = "", 3000);
                 return;
             }
 
             const now = performance.now();
             if (now - lastBlockTime < COOLDOWN_TIME) {
-                const remainingTime = Math.ceil((COOLDOWN_TIME - (now - lastBlockTime)) / 1000);
-                console.warn(`Block placement on cooldown. Please wait ${remainingTime} seconds.`);
-                cooldownMessage.textContent = `Cooldown: ${remainingTime}s`;
-                setTimeout(() => cooldownMessage.textContent = "", 3000);
+                console.warn(`Block placement on cooldown. Please wait.`);
                 return;
             }
 
@@ -679,17 +613,17 @@
                     );
 
                     let blockType = 'normal';
-                    if (currentBlockColor === '#00FF00') blockType = 'start';
-                    if (currentBlockColor === '#FF0000') blockType = 'end';
 
                     saveBlock(position, currentBlockColor, blockType);
                     lastBlockTime = now;
+                    startCooldownTimer();
                 }
             } else if (mode === 'delete') {
                 const intersects = raycaster.intersectObjects(objects, true);
                 if (intersects.length > 0) {
                     const block = intersects[0].object;
                     deleteBlock(block.userData.id);
+                    startCooldownTimer();
                 }
             }
         });
