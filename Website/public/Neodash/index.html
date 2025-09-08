@@ -269,7 +269,6 @@
             const provider = new GoogleAuthProvider();
             try {
                 await signInWithPopup(auth, provider);
-                location.reload();
             } catch (error) {
                 console.error("Google sign-in failed:", error);
             }
