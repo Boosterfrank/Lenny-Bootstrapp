@@ -226,7 +226,7 @@
                 <option value="delete">Delete</option>
             </select>
             
-            <p id="cooldown-message">Ready!</p>
+            <p id="cooldown-message">Ready</p>
             
             <div id="admin-panel" class="hidden">
                 <h2>Admin Panel</h2>
@@ -267,7 +267,7 @@
         let userId = null;
         let currentLevelRef;
         const ADMIN_EMAIL = 'francobetancourt@gmail.com';
-        const COOLDOWN_TIME = 10000;
+        const COOLDOWN_TIME = 5000;
         let lastBlockTime = parseInt(localStorage.getItem('lastBlockTime') || 0);
         let countdownInterval;
         let noCooldown = false;
@@ -286,7 +286,6 @@
         const GLOW_LAYER = 1;
         const glowObjects = [];
         const usernameTags = [];
-        let creatorName = 'Anonymous';
 
         let nextBlockType = null;
         const modeSelect = document.getElementById('mode-select');
@@ -308,10 +307,8 @@
                             if (userDocSnap.exists()) {
                                 const userData = userDocSnap.data();
                                 userIdDisplay.textContent = userData.username;
-                                creatorName = userData.username;
                             } else {
                                 userIdDisplay.textContent = user.displayName || 'Anonymous';
-                                creatorName = user.displayName || 'Anonymous';
                             }
                             
                             signInButton.classList.add('hidden');
@@ -326,7 +323,6 @@
                             signInButton.classList.remove('hidden');
                             usernameInput.classList.remove('hidden');
                             adminPanel.classList.add('hidden');
-                            creatorName = 'Anonymous';
                         }
                     });
                     
@@ -371,7 +367,6 @@
                 userIdDisplay.textContent = username;
                 signInButton.classList.add('hidden');
                 usernameInput.classList.add('hidden');
-                creatorName = username;
             } catch (error) {
                 console.error("Google sign-in failed:", error);
                 if (error.code === 'auth/popup-closed-by-user') {
@@ -540,7 +535,7 @@
             }, 3000);
         }
 
-        function createBlock(position, color, docId, type = 'normal', creatorName = null, showTag = true) {
+        function createBlock(position, color, docId, type = 'normal', creatorName = null) {
             const geometry = new THREE.BoxGeometry(1, 1, 1);
             let material;
             if (type === 'start') {
@@ -560,7 +555,7 @@
             if (type === 'start' || type === 'end') {
                 block.layers.set(GLOW_LAYER);
             }
-            if (showTag && creatorName) {
+            if (creatorName) {
                 addUsernameTag(block, creatorName);
             }
         }
@@ -594,7 +589,7 @@
                         existingBlock.userData.type = item.type;
                     }
                 } else {
-                    createBlock(position, item.color, item.id, item.type, item.creator, false);
+                    createBlock(position, item.color, item.id, item.type, item.creator);
                 }
             });
         }
