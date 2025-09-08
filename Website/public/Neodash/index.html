@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Level Editor</title>
+    <title>Neodash Editor</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
         
@@ -167,7 +167,7 @@
     <div id="editor-container">
         <canvas id="three-canvas"></canvas>
         <div id="controls-panel">
-            <h1>Level Editor</h1>
+            <h1>Neodash Editor</h1>
             <p><strong>User:</strong> <span id="user-id-display">Not signed in</span></p>
             <button id="sign-in-button">Sign In with Google</button>
             <div id="instructions">
@@ -202,9 +202,6 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, getDocs, writeBatch, query, where } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
         
-        console.log("Loading Firebase configuration...");
-
-        // Global variables provided by the environment
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = {
             apiKey: "AIzaSyD9pOqfA96UhxRR5IhZoyy2qyZ2VWKIVEc",
@@ -217,14 +214,13 @@
         };
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         
-        // Firebase initialization
         let app, db, auth;
         let userId = null;
         let currentLevelRef;
         let lastBlockTime = 0;
         let countdownInterval;
+        const COOLDOWN_TIME = 30000;
         const cooldownMessage = document.getElementById('cooldown-message');
-        const COOLDOWN_TIME = 30000; // 30 seconds in milliseconds
         const signInButton = document.getElementById('sign-in-button');
         const userIdDisplay = document.getElementById('user-id-display');
 
@@ -234,7 +230,6 @@
                     app = initializeApp(firebaseConfig);
                     db = getFirestore(app);
                     auth = getAuth(app);
-                    
                     onAuthStateChanged(auth, (user) => {
                         if (user) {
                             userId = user.uid;
@@ -252,11 +247,11 @@
                         }
                     });
                 } else {
-                    console.error("Firebase config is missing. Firestore will not be available.");
+                    console.error("Firebase config is missing.");
                     userIdDisplay.textContent = 'Config Missing';
                 }
             } catch (error) {
-                console.error("Firebase initialization failed:", error);
+                console.error("Firebase init failed:", error);
                 userIdDisplay.textContent = 'Init Failed';
             }
         }
@@ -264,11 +259,9 @@
         initFirebase();
         
         window.onload = function() {
-            // Initial sizing
             const width = window.innerWidth;
             const height = window.innerHeight;
             renderer.setSize(width, height);
-            // Start the animation on window load.
             animate(); 
         }
 
@@ -276,18 +269,17 @@
             const provider = new GoogleAuthProvider();
             try {
                 await signInWithPopup(auth, provider);
-                console.log("Signed in with Google.");
+                location.reload();
             } catch (error) {
                 console.error("Google sign-in failed:", error);
             }
         });
 
-        // --- Cooldown Timer ---
         function startCooldownTimer() {
             if (countdownInterval) {
                 clearInterval(countdownInterval);
             }
-            lastBlockTime = 0; // Reset last block time to allow immediate placement after sign-in
+            lastBlockTime = 0;
             cooldownMessage.textContent = "Ready!";
             countdownInterval = setInterval(() => {
                 const now = performance.now();
@@ -301,7 +293,6 @@
             }, 1000);
         }
         
-        // --- THREE.js Scene Setup ---
         const canvas = document.getElementById('three-canvas');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -318,11 +309,9 @@
         let pointerDownTime = 0;
         controls.addEventListener('start', () => { 
             isControlsActive = true; 
-            console.log("Camera controls activated.");
         });
         controls.addEventListener('end', () => { 
             isControlsActive = false; 
-            console.log("Camera controls deactivated.");
         });
 
         const raycaster = new THREE.Raycaster();
@@ -330,12 +319,11 @@
         
         let mode = 'add';
         let currentBlockColor = '#ff9900';
-        const objects = []; // Keep track of all interactive objects
+        const objects = [];
         const gridHelper = new THREE.GridHelper(100, 100, 0x444444, 0x222222);
         gridHelper.position.y = -0.01;
         scene.add(gridHelper);
 
-        // Lights
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         scene.add(ambientLight);
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -345,15 +333,12 @@
         camera.position.set(20, 20, 20);
         camera.lookAt(0, 0, 0);
 
-        // --- Block Creation & Deletion ---
         function createBlock(position, color, docId, type = 'normal') {
             const geometry = new THREE.BoxGeometry(1, 1, 1);
             let material = new THREE.MeshLambertMaterial({ color: new THREE.Color(color) });
-
             const block = new THREE.Mesh(geometry, material);
             block.position.copy(position);
             block.userData = { id: docId, color: color, type: type };
-
             scene.add(block);
             objects.push(block);
         }
@@ -368,15 +353,11 @@
         function updateSceneFromData(data) {
             const oldObjects = [...objects];
             const newObjectIds = new Set(data.map(item => item.id));
-
-            // Remove objects that are no longer in the data
             oldObjects.forEach(obj => {
                 if (!newObjectIds.has(obj.userData.id)) {
                     removeBlock(obj);
                 }
             });
-
-            // Add or update objects from the new data
             data.forEach(item => {
                 let existingBlock = objects.find(obj => obj.userData.id === item.id);
                 const position = new THREE.Vector3(item.position.x, item.position.y, item.position.z);
@@ -396,28 +377,24 @@
             });
         }
         
-        // --- Firestore Integration ---
         function setupFirestoreListener() {
             if (!currentLevelRef) return;
             onSnapshot(currentLevelRef, (snapshot) => {
-                console.log("Receiving real-time updates from Firestore...");
                 const levelData = snapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
                 updateSceneFromData(levelData);
             }, (error) => {
-                console.error("Firestore snapshot listener error:", error);
+                console.error("Firestore error:", error);
             });
         }
 
         async function saveBlock(position, color, type = 'normal') {
             if (!currentLevelRef) {
-                console.error("Firestore collection reference not available.");
+                console.error("Firestore reference not available.");
                 return;
             }
-
-            // Check if a block already exists at this exact position
             try {
                 const q = query(currentLevelRef, 
                     where("position.x", "==", position.x), 
@@ -426,62 +403,39 @@
                 );
                 const querySnapshot = await getDocs(q);
                 if (!querySnapshot.empty) {
-                    console.warn("A block already exists at this position. Cannot place a new one.");
+                    console.warn("A block exists at this position.");
                     return;
                 }
             } catch (e) {
-                console.error("Error checking for existing block:", e);
+                console.error("Error checking block:", e);
                 return;
             }
-
             try {
                 await setDoc(doc(currentLevelRef), {
                     position: { x: position.x, y: position.y, z: position.z },
                     color: color,
                     type: type
                 });
-                console.log(`Block added at (${position.x}, ${position.y}, ${position.z}) with color ${color}`);
             } catch (e) {
-                console.error("Error adding document: ", e);
+                console.error("Error adding document:", e);
             }
         }
 
         async function deleteBlock(docId) {
             if (!currentLevelRef) {
-                console.error("Firestore collection reference not available.");
+                console.error("Firestore reference not available.");
                 return;
             }
             try {
                 await deleteDoc(doc(currentLevelRef, docId));
-                console.log(`Block with ID ${docId} deleted.`);
             } catch (e) {
-                console.error("Error deleting document: ", e);
+                console.error("Error deleting document:", e);
             }
         }
 
-        async function resetLevel() {
-            if (!currentLevelRef) {
-                console.error("Firestore collection reference not available.");
-                return;
-            }
-            try {
-                const querySnapshot = await getDocs(currentLevelRef);
-                const batch = writeBatch(db);
-                querySnapshot.forEach((doc) => {
-                    batch.delete(doc.ref);
-                });
-                await batch.commit();
-                console.log("Level has been reset.");
-            } catch (e) {
-                console.error("Error resetting level:", e);
-            }
-        }
-
-        // --- UI & Event Listeners ---
         const modeSelect = document.getElementById('mode-select');
         modeSelect.addEventListener('change', (event) => {
             mode = event.target.value;
-            console.log(`Mode changed to: ${mode}`);
         });
 
         const colorPicker = document.getElementById('color-picker');
@@ -506,7 +460,6 @@
             const isClick = duration < 200 && !isControlsActive;
             
             if (!isClick) {
-                console.log("Interaction ignored: Not a quick click.");
                 return;
             }
 
@@ -517,7 +470,7 @@
 
             const now = performance.now();
             if (now - lastBlockTime < COOLDOWN_TIME) {
-                console.warn(`Block placement on cooldown. Please wait.`);
+                console.warn(`Block placement on cooldown.`);
                 return;
             }
 
@@ -535,10 +488,7 @@
                         0.5,
                         Math.round(intersectionPoint.z)
                     );
-
-                    let blockType = 'normal';
-
-                    saveBlock(position, currentBlockColor, blockType);
+                    saveBlock(position, currentBlockColor, 'normal');
                     lastBlockTime = now;
                     startCooldownTimer();
                 }
@@ -553,20 +503,10 @@
             }
         });
         
-        // --- Animation Loop ---
         function animate() {
             requestAnimationFrame(animate);
             controls.update();
             renderer.render(scene, camera);
-        }
-
-        window.onload = function () {
-            // Initial sizing
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            renderer.setSize(width, height);
-            // Start the animation on window load.
-            animate(); 
         }
     </script>
 </body>
