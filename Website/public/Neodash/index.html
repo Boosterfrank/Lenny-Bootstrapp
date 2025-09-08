@@ -306,7 +306,17 @@
                 document.getElementById('user-id-display').textContent = 'Init Failed';
             }
         }
-        initFirebase();
+        
+        window.onload = function() {
+            initFirebase();
+            // Initial sizing
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            renderer.setSize(width, height);
+            finalComposer.setSize(width, height);
+            // Start the animation on window load.
+            animate(); 
+        }
 
         signInButton.addEventListener('click', async () => {
             const provider = new GoogleAuthProvider();
