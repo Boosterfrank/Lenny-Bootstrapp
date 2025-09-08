@@ -226,8 +226,7 @@
                 <option value="delete">Delete</option>
             </select>
             
-            <button id="reset-button">Reset Level</button>
-            <p id="cooldown-message" style="text-align: center; color: yellow;"></p>
+            <p id="cooldown-message">Ready!</p>
         </div>
         <div id="auth-overlay">
             <h2>Sign in to begin editing.</h2>
@@ -319,6 +318,7 @@
                 clearInterval(countdownInterval);
             }
             lastBlockTime = 0; // Reset last block time to allow immediate placement after sign-in
+            cooldownMessage.textContent = "Ready!";
             countdownInterval = setInterval(() => {
                 const now = performance.now();
                 const remainingTime = Math.max(0, COOLDOWN_TIME - (now - lastBlockTime));
@@ -558,12 +558,6 @@
             currentBlockColor = event.target.value;
         });
 
-        const resetButton = document.getElementById('reset-button');
-        resetButton.addEventListener('click', () => {
-            resetLevel();
-            startCooldownTimer();
-        });
-
         window.addEventListener('resize', () => {
             const width = window.innerWidth;
             const height = window.innerHeight;
@@ -623,6 +617,7 @@
                 if (intersects.length > 0) {
                     const block = intersects[0].object;
                     deleteBlock(block.userData.id);
+                    lastBlockTime = now;
                     startCooldownTimer();
                 }
             }
