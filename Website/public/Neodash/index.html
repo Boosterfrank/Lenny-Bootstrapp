@@ -258,14 +258,15 @@
                     app = initializeApp(firebaseConfig);
                     db = getFirestore(app);
                     auth = getAuth(app);
+                    currentLevelRef = collection(db, `artifacts/${appId}/public/data/levels`);
+                    setupFirestoreListener();
+                    
                     onAuthStateChanged(auth, (user) => {
                         if (user) {
                             userId = user.uid;
                             userIdDisplay.textContent = user.displayName || user.email || user.uid;
                             signInButton.textContent = `Signed in as ${user.displayName || user.uid}`;
                             signInButton.disabled = true;
-                            currentLevelRef = collection(db, `artifacts/${appId}/public/data/levels`);
-                            setupFirestoreListener();
                             startCooldownTimer();
                             if (user.email === ADMIN_EMAIL) {
                                 adminPanel.classList.remove('hidden');
@@ -471,7 +472,10 @@
         }
         
         function setupFirestoreListener() {
-            if (!currentLevelRef) return;
+            if (!currentLevelRef) {
+                console.warn("Firestore reference not available for listener.");
+                return;
+            }
             onSnapshot(currentLevelRef, (snapshot) => {
                 const levelData = snapshot.docs.map(doc => ({
                     id: doc.id,
