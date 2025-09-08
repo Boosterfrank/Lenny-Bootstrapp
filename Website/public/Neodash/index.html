@@ -153,9 +153,6 @@
             "imports": {
                 "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js",
                 "three/examples/jsm/controls/OrbitControls.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js",
-                "three/examples/jsm/postprocessing/EffectComposer.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/EffectComposer.js",
-                "three/examples/jsm/postprocessing/RenderPass.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/RenderPass.js",
-                "three/examples/jsm/postprocessing/UnrealBloomPass.js": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/postprocessing/UnrealBloomPass.js",
                 "firebase/app": "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js",
                 "firebase/auth": "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js",
                 "firebase/firestore": "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js"
@@ -318,7 +315,7 @@
         let mode = 'add';
         let currentBlockColor = '#ff9900';
         const objects = [];
-        const gridHelper = new THREE.GridHelper(100, 100, 0x444444, 0x222222);
+        const gridHelper = new THREE.GridHelper(200, 200, 0x444444, 0x222222);
         gridHelper.position.y = -0.01;
         scene.add(gridHelper);
 
@@ -394,22 +391,7 @@
                 return;
             }
             try {
-                const q = query(currentLevelRef, 
-                    where("position.x", "==", position.x), 
-                    where("position.y", "==", position.y),
-                    where("position.z", "==", position.z)
-                );
-                const querySnapshot = await getDocs(q);
-                if (!querySnapshot.empty) {
-                    console.warn("A block exists at this position.");
-                    return;
-                }
-            } catch (e) {
-                console.error("Error checking block:", e);
-                return;
-            }
-            try {
-                await setDoc(doc(currentLevelRef), {
+                 await setDoc(doc(currentLevelRef), {
                     position: { x: position.x, y: position.y, z: position.z },
                     color: color,
                     type: type
@@ -478,18 +460,30 @@
             raycaster.setFromCamera(pointer, camera);
             
             if (mode === 'add') {
-                const intersects = raycaster.intersectObject(gridHelper);
+                const intersects = raycaster.intersectObjects(objects.concat(gridHelper), true);
                 if (intersects.length > 0) {
-                    const intersectionPoint = intersects[0].point;
-                    const position = new THREE.Vector3(
-                        Math.round(intersectionPoint.x),
-                        0.5,
-                        Math.round(intersectionPoint.z)
-                    );
-                    await saveBlock(position, currentBlockColor, 'normal');
-                    lastBlockTime = now;
-                    localStorage.setItem('lastBlockTime', lastBlockTime);
-                    startCooldownTimer();
+                    let newPosition;
+                    const intersectedObject = intersects[0].object;
+
+                    if (intersectedObject === gridHelper) {
+                        const intersectionPoint = intersects[0].point;
+                        newPosition = new THREE.Vector3(
+                            Math.round(intersectionPoint.x),
+                            0.5,
+                            Math.round(intersectionPoint.z)
+                        );
+                    } else {
+                        const existingPosition = intersectedObject.position;
+                        newPosition = new THREE.Vector3(
+                            existingPosition.x,
+                            existingPosition.y + 1,
+                            existingPosition.z
+                        );
+                    }
+                     await saveBlock(newPosition, currentBlockColor, 'normal');
+                     lastBlockTime = now;
+                     localStorage.setItem('lastBlockTime', lastBlockTime);
+                     startCooldownTimer();
                 }
             } else if (mode === 'delete') {
                 const intersects = raycaster.intersectObjects(objects, true);
