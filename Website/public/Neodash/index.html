@@ -278,7 +278,25 @@
                     db = getFirestore(app);
                     auth = getAuth(app);
                     
-                    checkAuthState();
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            // User is signed in.
+                            userId = user.uid;
+                            const userIdDisplay = document.getElementById('user-id-display');
+                            userIdDisplay.textContent = user.displayName || user.email || user.uid;
+                            authOverlay.classList.add('hidden');
+                            controlsPanel.classList.remove('hidden');
+                            currentLevelRef = collection(db, `artifacts/${appId}/public/data/levels`);
+                            setupFirestoreListener();
+                            startCooldownTimer();
+                        } else {
+                            // User is signed out.
+                            const userIdDisplay = document.getElementById('user-id-display');
+                            userIdDisplay.textContent = 'Not signed in';
+                            authOverlay.classList.remove('hidden');
+                            controlsPanel.classList.add('hidden');
+                        }
+                    });
                 } else {
                     console.error("Firebase config is missing. Firestore will not be available.");
                     document.getElementById('user-id-display').textContent = 'Config Missing';
@@ -287,27 +305,6 @@
                 console.error("Firebase initialization failed:", error);
                 document.getElementById('user-id-display').textContent = 'Init Failed';
             }
-        }
-
-        function checkAuthState() {
-            const userIdDisplay = document.getElementById('user-id-display');
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    // User is signed in.
-                    userId = user.uid;
-                    userIdDisplay.textContent = user.displayName || user.email || user.uid;
-                    authOverlay.classList.add('hidden');
-                    controlsPanel.classList.remove('hidden');
-                    currentLevelRef = collection(db, `artifacts/${appId}/public/data/levels`);
-                    setupFirestoreListener();
-                    startCooldownTimer();
-                } else {
-                    // User is signed out.
-                    userIdDisplay.textContent = 'Not signed in';
-                    authOverlay.classList.remove('hidden');
-                    controlsPanel.classList.add('hidden');
-                }
-            });
         }
         initFirebase();
 
