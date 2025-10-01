@@ -9,6 +9,34 @@
   "featuredApps": [],
   "apps": [
     {
+      "name": "SuperMario64",
+      "bundleIdentifier": "xyz.cypwn.sm64ios-60fps",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "An awesome app.",
+      "localizedDescription": "This is an awesome app only available on AltStore.",
+      "iconURL": "https://i.imgur.com/ARHvuP3.png",
+      "tintColor": "#0464fc",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/SuperMario64_60FPS_1.2.1.ipa",
+          "size": 9200000,
+          "version": "1.2.1",
+          "buildVersion": null,
+          "date": "2025-10-01T14:15:00-04:00",
+          "localizedDescription": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      },
+      "patreon": {}
+    },
+    {
       "name": "AngelAuraAmethyst (Alpha)",
       "bundleIdentifier": "org.angelauramc.amethyst",
       "marketplaceID": "",
@@ -21,12 +49,12 @@
       "screenshots": [],
       "versions": [
         {
-          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/org.angelauramc.amethyst-1.0-ios.ipa",
-          "size": 150700000,
           "version": "1.0",
-          "buildVersion": null,
           "date": "2025-10-01T03:16:00-04:00",
           "localizedDescription": null,
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/org.angelauramc.amethyst-1.0-ios.ipa",
+          "size": 150700000,
+          "buildVersion": null,
           "minOSVersion": null
         }
       ],
@@ -52,12 +80,12 @@
       "screenshots": [],
       "versions": [
         {
-          "downloadURL": "https://github.com/Nyasami/Ksign/releases/latest/download/Ksign.ipa",
-          "size": 14000000,
           "version": "Latest",
-          "buildVersion": null,
           "date": "2025-09-24T07:07:00-04:00",
           "localizedDescription": null,
+          "downloadURL": "https://github.com/Nyasami/Ksign/releases/latest/download/Ksign.ipa",
+          "size": 14000000,
+          "buildVersion": null,
           "minOSVersion": null
         }
       ],
