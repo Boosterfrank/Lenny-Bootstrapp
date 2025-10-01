@@ -1,86 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rocket Apps</title>
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Rocket" />
-    <link rel="apple-touch-icon" href="https://github.com/Boosterfrank/Rocket/blob/main/Images/RocketIconCrop.png?raw=true">
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-          Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        background-color: #000;
-        color: white;
-        overflow-x: hidden;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Rocket">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="https://github.com/Boosterfrank/Rocket/blob/main/Images/RocketIconCrop.png?raw=true">
+  <title>Rocket App Library</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 1rem;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen;
+      background: #000;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .app-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .app-card {
+      background: #111;
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
-      .app-card {
-        margin: 20px;
-        padding: 20px;
-        border-radius: 15px;
-        background-color: #111;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      }
-      .get-btn {
-        margin-top: 15px;
-        padding: 10px 16px;
-        font-size: 1rem;
-        border: none;
-        border-radius: 8px;
-        background-color: #1e90ff;
-        color: white;
-        cursor: pointer;
-      }
-      .get-btn:disabled {
-        background-color: #555;
-        cursor: default;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script>
-      const SIGNING_URL =
-        'https://api.cococloud-signing.online/files/free/own-signing.php?certp12URL=https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevCert.p12&certmobileprovisionURL=https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevProvision.mobileprovision&certpass=684100&url=';
+    }
 
-      async function loadApps() {
-        const res = await fetch(
-          'https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json'
-        );
-        const data = await res.json();
+    .app-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
 
-        const container = document.getElementById('app');
-        data.apps.forEach((app) => {
-          const latest = app.versions[0];
-          const sizeMB = (latest.size / 1000000).toFixed(1);
+    .app-info {
+      flex-grow: 1;
+    }
 
-          const card = document.createElement('div');
-          card.className = 'app-card';
+    .app-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
 
-          card.innerHTML = `
-            <img src="${app.iconURL}" alt="${app.name}" width="80" height="80" style="border-radius: 20px" />
-            <h2>${app.name}</h2>
-            <p>${app.subtitle}</p>
-            <p style="color: #888">Version: ${latest.version} • ${sizeMB} MB</p>
-            <button class="get-btn">Get</button>
-          `;
+    .app-subtitle {
+      font-size: 0.9rem;
+      color: #aaa;
+    }
 
-          const btn = card.querySelector('button');
-          btn.onclick = () => {
-            btn.disabled = true;
-            const url = SIGNING_URL + encodeURIComponent(latest.downloadURL);
-            window.location.href = url;
-          };
+    .app-version {
+      font-size: 0.8rem;
+      color: #666;
+    }
 
-          container.appendChild(card);
+    .get-button {
+      background-color: #0a84ff;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.1s;
+    }
+
+    .get-button:active {
+      transform: scale(0.96);
+    }
+
+    .get-button:disabled {
+      background-color: #555;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h1>Rocket Apps</h1>
+  <div class="app-list" id="app-list"></div>
+
+  <script>
+    const jsonURL = "https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json";
+    const installBaseURL = "https://api.cococloud-signing.online/files/free/own-signing.php?certp12URL=https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevCert.p12&certmobileprovisionURL=https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevProvision.mobileprovision&certpass=684100&url=";
+
+    async function loadApps() {
+      const res = await fetch(jsonURL);
+      const data = await res.json();
+
+      const appList = document.getElementById("app-list");
+      appList.innerHTML = "";
+
+      data.apps.forEach((app, index) => {
+        const version = app.versions[0];
+        const card = document.createElement("div");
+        card.className = "app-card";
+        card.style.animationDelay = `${index * 0.1}s`;
+
+        card.innerHTML = `
+          <img src="${app.iconURL}" class="app-icon" alt="${app.name}" />
+          <div class="app-info">
+            <div class="app-name">${app.name}</div>
+            <div class="app-subtitle">${app.subtitle || ""}</div>
+            <div class="app-version">v${version.version || ""}</div>
+          </div>
+          <button class="get-button">Get</button>
+        `;
+
+        const button = card.querySelector(".get-button");
+        button.addEventListener("click", () => {
+          button.disabled = true;
+          button.textContent = "Installing…";
+
+          const fullURL = installBaseURL + encodeURIComponent(version.downloadURL);
+          window.location.href = fullURL;
+
+          setTimeout(() => {
+            button.disabled = false;
+            button.textContent = "Get";
+          }, 8000);
         });
-      }
 
-      window.addEventListener('DOMContentLoaded', loadApps);
-    </script>
-  </body>
+        appList.appendChild(card);
+      });
+    }
+
+    // Initial load
+    loadApps();
+
+    // Pull to refresh support (iOS Safari style)
+    let startY = 0;
+    window.addEventListener('touchstart', (e) => {
+      if (window.scrollY === 0) startY = e.touches[0].pageY;
+    });
+
+    window.addEventListener('touchend', (e) => {
+      if (window.scrollY === 0 && e.changedTouches[0].pageY - startY > 60) {
+        setTimeout(loadApps, 500);
+      }
+    });
+  </script>
+</body>
 </html>
