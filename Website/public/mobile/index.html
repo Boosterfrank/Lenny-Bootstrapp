@@ -115,7 +115,8 @@
 
   <script>
     const appsContainer = document.getElementById('apps');
-
+    const splash = document.getElementById('splash');
+    
     async function fetchApps() {
       const res = await fetch('https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json');
       const data = await res.json();
