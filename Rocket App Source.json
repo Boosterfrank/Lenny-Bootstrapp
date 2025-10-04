@@ -9,23 +9,23 @@
   "featuredApps": [],
   "apps": [
     {
-      "name": "SuperMario64",
-      "bundleIdentifier": "xyz.cypwn.sm64ios-60fps",
+      "name": "MCDS",
+      "bundleIdentifier": "com.rocket.mcdsmobile",
       "marketplaceID": "",
       "developerName": "Example Developer",
-      "subtitle": "A Super Mario 64 port for iOS",
+      "subtitle": "An awesome app.",
       "localizedDescription": "This is an awesome app only available on AltStore.",
-      "iconURL": "https://i.imgur.com/ARHvuP3.png",
-      "tintColor": "#0464fc",
+      "iconURL": "https://i.imgur.com/NsvAUbz.png",
+      "tintColor": "#0c04fc",
       "category": "other",
       "screenshots": [],
       "versions": [
         {
-          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/SuperMario64_60FPS_1.2.1.ipa",
-          "size": 9200000,
-          "version": "1.2.1",
+          "downloadURL": "https://github.com/Boosterfrank/mcds-mobile/releases/latest/download/MCDS_Mobile.ipa",
+          "size": 8300000,
+          "version": "1.6.8",
           "buildVersion": null,
-          "date": "2025-10-01T14:15:00-04:00",
+          "date": "2025-10-04T17:20:00-04:00",
           "localizedDescription": null,
           "minOSVersion": null
         }
