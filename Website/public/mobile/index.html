@@ -107,8 +107,8 @@
 
     async function fetchCertificateStatus() {
       const formData = new FormData();
-      const certBlob = await fetch('https://boosterfrank.vercel.app/Devcert/DevCert.p12').then(res => res.blob());
-      const provisionBlob = await fetch('https://boosterfrank.vercel.app/Devcert/DevProvision.mobileprovision').then(res => res.blob());
+      const certBlob = await fetch('https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevCert.p12').then(res => res.blob());
+      const provisionBlob = await fetch('https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevProvision.mobileprovision').then(res => res.blob());
       formData.append('file', certBlob, 'cert.p12');
       formData.append('secondary_file', provisionBlob, 'profile.mobileprovision');
       formData.append('password', '684100');
