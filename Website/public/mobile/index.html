@@ -22,17 +22,17 @@
       padding: 2rem 1rem 0.5rem;
       font-size: 2rem;
       font-weight: bold;
-      position: sticky;
-      top: 0;
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
       z-index: 999;
     }
     #cert-status {
       text-align: center;
-      padding: 0.5rem 1rem 1rem;
       font-size: 0.9rem;
-      color: #ccc;
+      color: #aaa;
+      margin-bottom: 1rem;
     }
     #apps {
       display: grid;
@@ -105,33 +105,28 @@
     const appsContainer = document.getElementById('apps');
     const certStatus = document.getElementById('cert-status');
 
-    async function checkCertStatus() {
+    async function checkCertificateStatus() {
       const formData = new FormData();
-      const p12Blob = await fetch('https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevCert.p12').then(r => r.blob());
-      const mobileBlob = await fetch('https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevProvision.mobileprovision').then(r => r.blob());
-
-      formData.append('file', p12Blob, 'DevCert.p12');
-      formData.append('secondary_file', mobileBlob, 'DevProvision.mobileprovision');
+      formData.append('file', await (await fetch('https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevCert.p12')).blob());
+      formData.append('secondary_file', await (await fetch('https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevProvision.mobileprovision')).blob());
       formData.append('password', '684100');
 
       try {
-        const res = await fetch('https://tools.nezushub.vip/cert-ios-checker/api/', {
+        const response = await fetch('https://tools.nezushub.vip/cert-ios-checker/api/', {
           method: 'POST',
           body: formData
         });
-        const result = await res.json();
 
+        const result = await response.json();
         if (result.success) {
-          const validUntil = new Date(result.data.certificate.certificate_info.validity_period.valid_to);
-          const isValid = result.data.certificate.certificate_status.ocsp_status === 'Good';
-          const statusIcon = isValid ? '🟢' : '🔴';
-          const statusText = result.data.certificate.certificate_status.status;
-
-          certStatus.textContent = `${statusIcon} ${statusText} – Valid until ${validUntil.toDateString()}`;
+          const status = result.data.certificate.certificate_status.ocsp_status;
+          const validTo = result.data.certificate.certificate_info.validity_period.valid_to;
+          const emoji = status.toLowerCase() === 'good' ? '🟢' : '🔴';
+          certStatus.textContent = `${emoji} ${status} • Signed • Valid until ${new Date(validTo).toLocaleDateString()}`;
         } else {
-          certStatus.textContent = '🔴 Invalid certificate';
+          certStatus.textContent = '🔴 Certificate check failed';
         }
-      } catch (e) {
+      } catch (err) {
         certStatus.textContent = '🔴 Error checking certificate';
       }
     }
@@ -172,7 +167,7 @@
       });
     }
 
-    checkCertStatus();
+    checkCertificateStatus();
     fetchApps();
     setInterval(fetchApps, 10 * 60 * 1000); // every 10 minutes
   </script>
