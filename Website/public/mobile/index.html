@@ -1,162 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Rocket Library">
-  <link rel="apple-touch-icon" href="https://github.com/Boosterfrank/Rocket/blob/main/Images/RocketIconCrop.png?raw=true">
-  <title>Rocket Library</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #000;
-      color: #fff;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      overflow-x: hidden;
-    }
-    header {
-      text-align: center;
-      padding: 2rem 1rem;
-      font-size: 2rem;
-      font-weight: bold;
-      position: sticky;
-      top: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(10px);
-      z-index: 999;
-    }
-    #apps {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-      padding: 0 1rem 3rem;
-    }
-    .app-card {
-      background: rgba(30, 30, 30, 0.85);
-      backdrop-filter: blur(10px);
-      padding: 1rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 0.5s ease-out forwards;
-    }
-    .app-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 12px;
-      object-fit: cover;
-      margin-right: 1rem;
-    }
-    .app-header {
-      display: flex;
-      align-items: center;
-    }
-    .app-details {
-      flex: 1;
-    }
-    .subtitle {
-      font-size: 0.9rem;
-      color: #aaa;
-    }
-    .meta {
-      font-size: 0.8rem;
-      color: #666;
-    }
-    .get-btn {
-      margin-top: 0.5rem;
-      background: #1e90ff;
-      color: white;
-      padding: 0.5rem 1.25rem;
-      border: none;
-      border-radius: 0.75rem;
-      font-size: 1rem;
-      transition: transform 0.1s;
-    }
-    .get-btn:active {
-      transform: scale(0.96);
-    }
-    .get-btn:disabled {
-      background: #555;
-    }
-    #splash {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-    #splash img {
-      width: 120px;
-      height: 120px;
-    }
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div id="splash">
-    <img src="https://github.com/Boosterfrank/Rocket/blob/main/Images/RocketIcon.png?raw=true" alt="Rocket Icon">
-  </div>
-  <header>Rocket Library</header>
-  <div id="apps"></div>
-
-  <script>
-    const appsContainer = document.getElementById('apps');
-    const splash = document.getElementById('splash');
-    
-    async function fetchApps() {
-      const res = await fetch('https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json');
-      const data = await res.json();
-      appsContainer.innerHTML = '';
-
-      data.apps.forEach((app, index) => {
-        const latest = app.versions[0];
-        const sizeMB = (latest.size / (1024 * 1024)).toFixed(1);
-        const versionText = latest.version.toLowerCase() === 'latest' ? 'Latest' : `v${latest.version}`;
-
-        const card = document.createElement('div');
-        card.className = 'app-card';
-        card.style.animationDelay = `${index * 100}ms`;
-        card.innerHTML = `
-          <div class="app-header">
-            <img class="app-icon" src="${app.iconURL}" alt="${app.name}" />
-            <div class="app-details">
-              <div><strong>${app.name}</strong></div>
-              <div class="subtitle">${app.subtitle}</div>
-              <div class="meta">${versionText} • ${sizeMB} MB</div>
-              <button class="get-btn">Get</button>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>UDID</title>
+        <meta name="viewport" content="width=device-width" />
+    </head>
+    <body>
+        <div>
+            <div>
+                <h1>Knowing the UDID of my iOS device</h1>
+                <p>Step 1: Follow the next link and install the certificate</p>  
+                <p> <a class="button" href="get_mobileconfig.php">Give me tap</a> </p>
+                </div>
             </div>
-          </div>
-        `;
-
-        const button = card.querySelector('button');
-        button.addEventListener('click', () => {
-          button.disabled = true;
-          const fullURL = `https://api.cococloud-signing.online/files/free/own-signing.php?certp12URL=https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevCert.p12&certmobileprovisionURL=https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevProvision.mobileprovision&certpass=684100&url=${latest.downloadURL}`;
-          window.location.href = fullURL;
-        });
-
-        appsContainer.appendChild(card);
-      });
-
-      document.getElementById('splash').style.display = 'none';
-    }
-
-    fetchApps();
-    setInterval(fetchApps, 10 * 60 * 1000); // every 10 minutes
-  </script>
-</body>
+    </body>
 </html>
