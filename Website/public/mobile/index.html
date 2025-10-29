@@ -19,7 +19,7 @@
     }
     header {
       text-align: center;
-      padding: 2rem 1rem 0.5rem;
+      padding: 2rem 1rem 1rem;
       font-size: 2rem;
       font-weight: bold;
       position: sticky;
@@ -30,8 +30,8 @@
     }
     #cert-status {
       text-align: center;
+      color: #ccc;
       font-size: 0.9rem;
-      color: #aaa;
       margin-bottom: 1rem;
     }
     #apps {
@@ -98,45 +98,39 @@
 </head>
 <body>
   <header>Rocket</header>
-  <div id="cert-status">Checking certificate status...</div>
+  <div id="cert-status">Loading certificate status...</div>
   <div id="apps"></div>
 
   <script>
     const appsContainer = document.getElementById('apps');
-    const certStatusDiv = document.getElementById('cert-status');
+    const certStatus = document.getElementById('cert-status');
 
     async function fetchCertificateStatus() {
-      try {
-        const formData = new FormData();
-        formData.append('file', await fetchFile('https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevCert.p12'));
-        formData.append('secondary_file', await fetchFile('https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevProvision.mobileprovision'));
-        formData.append('password', '684100');
+      const formData = new FormData();
+      const certBlob = await fetch('https://boosterfrank.vercel.app/Devcert/DevCert.p12').then(res => res.blob());
+      const provisionBlob = await fetch('https://boosterfrank.vercel.app/Devcert/DevProvision.mobileprovision').then(res => res.blob());
+      formData.append('file', certBlob, 'cert.p12');
+      formData.append('secondary_file', provisionBlob, 'profile.mobileprovision');
+      formData.append('password', '684100');
 
+      try {
         const res = await fetch('https://tools.nezushub.vip/cert-ios-checker/api/', {
           method: 'POST',
           body: formData
         });
-
-        const data = await res.json();
-
-        if (data.success && data.data.certificate) {
-          const statusIcon = data.data.certificate.certificate_status.ocsp_status === 'Good' ? '🟢' : '🔴';
-          const status = data.data.certificate.certificate_status.status;
-          const validUntil = new Date(data.data.certificate.certificate_info.validity_period.valid_to).toLocaleDateString();
-          certStatusDiv.textContent = `${statusIcon} ${status} • Valid until ${validUntil}`;
+        const result = await res.json();
+        if (result.success) {
+          const { valid_to } = result.data.certificate.certificate_info.validity_period;
+          const status = result.data.certificate.certificate_status.status;
+          const ocsp = result.data.certificate.certificate_status.ocsp_status;
+          const isGood = status === 'Signed' && ocsp === 'Good';
+          certStatus.textContent = `${isGood ? '🟢' : '🔴'} ${status}, valid until ${new Date(valid_to).toLocaleDateString()}`;
         } else {
-          certStatusDiv.textContent = '🔴 Certificate check failed';
+          certStatus.textContent = '🔴 Failed to verify certificate';
         }
-      } catch (error) {
-        certStatusDiv.textContent = '🔴 Error checking certificate';
+      } catch (e) {
+        certStatus.textContent = '🔴 Error checking certificate';
       }
-    }
-
-    async function fetchFile(url) {
-      const res = await fetch(url);
-      const blob = await res.blob();
-      const fileName = url.split('/').pop().split('?')[0];
-      return new File([blob], fileName);
     }
 
     async function fetchApps() {
@@ -158,7 +152,7 @@
             <div class="app-details">
               <div><strong>${app.name}</strong></div>
               <div class="subtitle">${app.subtitle}</div>
-              <div class="meta">${versionText} • ${sizeMB} MB</div>
+              <div class="meta">${versionText}${latest.version.toLowerCase() !== 'latest' ? ` • ${sizeMB} MB` : ''}</div>
               <button class="get-btn">Get</button>
             </div>
           </div>
@@ -177,7 +171,7 @@
 
     fetchCertificateStatus();
     fetchApps();
-    setInterval(fetchApps, 10 * 60 * 1000); // Refresh every 10 min
+    setInterval(fetchApps, 10 * 60 * 1000); // every 10 minutes
   </script>
 </body>
 </html>
