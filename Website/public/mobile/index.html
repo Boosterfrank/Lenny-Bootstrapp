@@ -19,7 +19,7 @@
     }
     header {
       text-align: center;
-      padding: 2rem 1rem 0.5rem;
+      padding: 2rem 1rem 0.25rem;
       font-size: 2rem;
       font-weight: bold;
       position: sticky;
@@ -31,7 +31,7 @@
     #cert-status {
       text-align: center;
       font-size: 0.9rem;
-      color: #ccc;
+      color: #aaa;
       margin-bottom: 1rem;
     }
     #apps {
@@ -98,12 +98,42 @@
 </head>
 <body>
   <header>Rocket</header>
-  <div id="cert-status">🔄 Checking certificate status...</div>
+  <div id="cert-status">Checking certificate...</div>
   <div id="apps"></div>
 
   <script>
     const appsContainer = document.getElementById('apps');
-    const certStatus = document.getElementById('cert-status');
+    const certStatusEl = document.getElementById('cert-status');
+
+    async function fetchCertificateStatus() {
+      const formData = new FormData();
+      const p12Blob = await fetch('https://boosterfrank.vercel.app/mobile/Devcert/DevCert.p12').then(r => r.blob());
+      const mobileprovisionBlob = await fetch('https://boosterfrank.vercel.app/mobile/Devcert/DevProvision.mobileprovision').then(r => r.blob());
+      formData.append('file', new File([p12Blob], 'DevCert.p12'));
+      formData.append('secondary_file', new File([mobileprovisionBlob], 'DevProvision.mobileprovision'));
+      formData.append('password', '684100');
+
+      try {
+        const res = await fetch('https://tools.nezushub.vip/cert-ios-checker/api/', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!res.ok) throw new Error('Bad response');
+        const result = await res.json();
+
+        if (result.success) {
+          const { ocsp_status } = result.data.certificate.certificate_status;
+          const valid_to = new Date(result.data.certificate.certificate_info.validity_period.valid_to);
+          const green = ocsp_status.toLowerCase() === 'good';
+          certStatusEl.textContent = `${green ? '🟢' : '🔴'} Signed • Valid until ${valid_to.toLocaleDateString()}`;
+        } else {
+          certStatusEl.textContent = '🔴 Unable to read certificate info';
+        }
+      } catch (e) {
+        certStatusEl.textContent = '🔴 Failed to fetch certificate status';
+      }
+    }
 
     async function fetchApps() {
       const res = await fetch('https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json');
@@ -124,7 +154,7 @@
             <div class="app-details">
               <div><strong>${app.name}</strong></div>
               <div class="subtitle">${app.subtitle}</div>
-              <div class="meta">${versionText === 'Latest' ? '' : versionText} ${sizeMB} MB</div>
+              <div class="meta">${versionText} • ${sizeMB} MB</div>
               <button class="get-btn">Get</button>
             </div>
           </div>
@@ -141,42 +171,9 @@
       });
     }
 
-    async function fetchCertificateStatus() {
-      try {
-        const formData = new FormData();
-        formData.append('password', '684100');
-
-        const p12Blob = await fetch('https://boosterfrank.vercel.app/mobile/Devcert/DevCert.p12').then(r => r.blob());
-        const mobileprovBlob = await fetch('https://boosterfrank.vercel.app/mobile/Devcert/DevProvision.mobileprovision').then(r => r.blob());
-
-        formData.append('file', p12Blob, 'DevCert.p12');
-        formData.append('secondary_file', mobileprovBlob, 'DevProvision.mobileprovision');
-
-        const res = await fetch('https://tools.nezushub.vip/cert-ios-checker/api/', {
-          method: 'POST',
-          body: formData
-        });
-
-        const result = await res.json();
-
-        if (result.success) {
-          const cert = result.data.certificate;
-          const status = cert.certificate_status;
-          const validity = cert.certificate_info.validity_period.valid_to.split('T')[0];
-          const statusEmoji = status.ocsp_status.toLowerCase() === 'good' ? '🟢' : '🔴';
-          certStatus.innerText = `${statusEmoji} ${status.status} • valid until ${validity}`;
-        } else {
-          certStatus.innerText = '🔴 Failed to load certificate status';
-        }
-      } catch (err) {
-        console.error(err);
-        certStatus.innerText = '🔴 Error fetching certificate status';
-      }
-    }
-
     fetchCertificateStatus();
     fetchApps();
-    setInterval(fetchApps, 10 * 60 * 1000); // every 10 minutes
+    setInterval(fetchApps, 10 * 60 * 1000);
   </script>
 </body>
 </html>
