@@ -19,7 +19,7 @@
     }
     header {
       text-align: center;
-      padding: 2rem 1rem 1rem;
+      padding: 2rem 1rem 0.5rem;
       font-size: 2rem;
       font-weight: bold;
       position: sticky;
@@ -30,8 +30,8 @@
     }
     #cert-status {
       text-align: center;
-      color: #ccc;
       font-size: 0.9rem;
+      color: #ccc;
       margin-bottom: 1rem;
     }
     #apps {
@@ -98,40 +98,12 @@
 </head>
 <body>
   <header>Rocket</header>
-  <div id="cert-status">Loading certificate status...</div>
+  <div id="cert-status">🔄 Checking certificate status...</div>
   <div id="apps"></div>
 
   <script>
     const appsContainer = document.getElementById('apps');
     const certStatus = document.getElementById('cert-status');
-
-    async function fetchCertificateStatus() {
-      const formData = new FormData();
-      const certBlob = await fetch('https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevCert.p12').then(res => res.blob());
-      const provisionBlob = await fetch('https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevProvision.mobileprovision').then(res => res.blob());
-      formData.append('file', certBlob, 'cert.p12');
-      formData.append('secondary_file', provisionBlob, 'profile.mobileprovision');
-      formData.append('password', '684100');
-
-      try {
-        const res = await fetch('https://tools.nezushub.vip/cert-ios-checker/api/', {
-          method: 'POST',
-          body: formData
-        });
-        const result = await res.json();
-        if (result.success) {
-          const { valid_to } = result.data.certificate.certificate_info.validity_period;
-          const status = result.data.certificate.certificate_status.status;
-          const ocsp = result.data.certificate.certificate_status.ocsp_status;
-          const isGood = status === 'Signed' && ocsp === 'Good';
-          certStatus.textContent = `${isGood ? '🟢' : '🔴'} ${status}, valid until ${new Date(valid_to).toLocaleDateString()}`;
-        } else {
-          certStatus.textContent = '🔴 Failed to verify certificate';
-        }
-      } catch (e) {
-        certStatus.textContent = '🔴 Error checking certificate';
-      }
-    }
 
     async function fetchApps() {
       const res = await fetch('https://raw.githubusercontent.com/Boosterfrank/Lenny-Bootstrapp/refs/heads/main/Rocket%20App%20Source.json');
@@ -152,7 +124,7 @@
             <div class="app-details">
               <div><strong>${app.name}</strong></div>
               <div class="subtitle">${app.subtitle}</div>
-              <div class="meta">${versionText}${latest.version.toLowerCase() !== 'latest' ? ` • ${sizeMB} MB` : ''}</div>
+              <div class="meta">${versionText === 'Latest' ? '' : versionText} ${sizeMB} MB</div>
               <button class="get-btn">Get</button>
             </div>
           </div>
@@ -161,12 +133,45 @@
         const button = card.querySelector('button');
         button.addEventListener('click', () => {
           button.disabled = true;
-          const fullURL = `https://api.cococloud-signing.online/files/free/own-signing.php?certp12URL=https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevCert.p12&certmobileprovisionURL=https://github.com/Boosterfrank/Lenny-Bootstrapp/raw/refs/heads/main/Devcert/DevProvision.mobileprovision&certpass=684100&url=${latest.downloadURL}`;
+          const fullURL = `https://api.cococloud-signing.online/files/free/own-signing.php?certp12URL=https://boosterfrank.vercel.app/mobile/Devcert/DevCert.p12&certmobileprovisionURL=https://boosterfrank.vercel.app/mobile/Devcert/DevProvision.mobileprovision&certpass=684100&url=${latest.downloadURL}`;
           window.location.href = fullURL;
         });
 
         appsContainer.appendChild(card);
       });
+    }
+
+    async function fetchCertificateStatus() {
+      try {
+        const formData = new FormData();
+        formData.append('password', '684100');
+
+        const p12Blob = await fetch('https://boosterfrank.vercel.app/mobile/Devcert/DevCert.p12').then(r => r.blob());
+        const mobileprovBlob = await fetch('https://boosterfrank.vercel.app/mobile/Devcert/DevProvision.mobileprovision').then(r => r.blob());
+
+        formData.append('file', p12Blob, 'DevCert.p12');
+        formData.append('secondary_file', mobileprovBlob, 'DevProvision.mobileprovision');
+
+        const res = await fetch('https://tools.nezushub.vip/cert-ios-checker/api/', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          const cert = result.data.certificate;
+          const status = cert.certificate_status;
+          const validity = cert.certificate_info.validity_period.valid_to.split('T')[0];
+          const statusEmoji = status.ocsp_status.toLowerCase() === 'good' ? '🟢' : '🔴';
+          certStatus.innerText = `${statusEmoji} ${status.status} • valid until ${validity}`;
+        } else {
+          certStatus.innerText = '🔴 Failed to load certificate status';
+        }
+      } catch (err) {
+        console.error(err);
+        certStatus.innerText = '🔴 Error fetching certificate status';
+      }
     }
 
     fetchCertificateStatus();
