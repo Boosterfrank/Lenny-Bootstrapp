@@ -114,19 +114,16 @@
       formData.append('password', '684100');
 
       try {
-        const res = await fetch('https://tools.nezushub.vip/cert-ios-checker/api/', {
+        const res = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://tools.nezushub.vip/cert-ios-checker/api/'), {
           method: 'POST',
           body: formData
         });
 
-        if (!res.ok) throw new Error('Bad response');
         const result = await res.json();
 
         if (result.success) {
-          const { ocsp_status } = result.data.certificate.certificate_status;
-          const valid_to = new Date(result.data.certificate.certificate_info.validity_period.valid_to);
-          const green = ocsp_status.toLowerCase() === 'good';
-          certStatusEl.textContent = `${green ? '🟢' : '🔴'} Signed • Valid until ${valid_to.toLocaleDateString()}`;
+          const validTo = new Date(result.data.certificate.certificate_info.validity_period.valid_to);
+          certStatusEl.textContent = `🟢 Signed • Valid until ${validTo.toLocaleDateString()}`;
         } else {
           certStatusEl.textContent = '🔴 Unable to read certificate info';
         }
