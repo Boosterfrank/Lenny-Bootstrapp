@@ -122,12 +122,15 @@
         if (!res.ok) throw new Error('Bad response');
         const result = await res.json();
 
-        if (result.success && result.data?.certificate?.certificate_info?.validity_period) {
-          const { validity_period, ocsp_url } = result.data.certificate.certificate_info;
-          const { status } = result.data.certificate.certificate_status;
-          const valid_to = new Date(validity_period.valid_to);
-          const green = status.toLowerCase() === 'signed';
-          certStatusEl.textContent = `${green ? '🟢' : '🔴'} Signed • Valid until ${valid_to.toLocaleDateString()}`;
+        if (result.success) {
+        const { ocsp_status } = result.data.certificate.certificate_status;
+        const valid_to = new Date(result.data.certificate.certificate_info.validity_period.valid_to);
+        const issuerCN = result.data.certificate.certificate_info.issuer.commonName || 'Unknown Issuer';
+        
+        
+        const green = ocsp_status.toLowerCase() === 'good';
+        certIssuerEl.textContent = `Issuer: ${issuerCN}`;
+        certStatusEl.textContent = `${green ? '🟢' : '🔴'} Signed • Valid until ${valid_to.toLocaleDateString()}`;
         } else {
           certStatusEl.textContent = '🔴 Unable to read certificate info';
         }
