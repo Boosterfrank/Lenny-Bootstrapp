@@ -1,0 +1,228 @@
+{
+  "name": "Rocket App Source",
+  "subtitle": "",
+  "description": "",
+  "iconURL": "https://i.imgur.com/mXKDbia.png",
+  "website": "",
+  "patreonURL": "",
+  "tintColor": "#000000",
+  "featuredApps": [],
+  "apps": [
+    {
+      "name": "MCDS",
+      "bundleIdentifier": "com.rocket.mcdsmobile",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "An app for students at MCDS.",
+      "localizedDescription": "This is an awesome app only available on AltStore.",
+      "iconURL": "https://i.imgur.com/NsvAUbz.png",
+      "tintColor": "#0c04fc",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "downloadURL": "https://github.com/Boosterfrank/mcds-mobile/releases/latest/download/MCDS_Mobile.ipa",
+          "size": 8400000,
+          "version": "Latest",
+          "buildVersion": null,
+          "date": "2025-10-04T17:20:00-04:00",
+          "localizedDescription": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      },
+      "patreon": {}
+    },
+    {
+      "name": "AngelAuraAmethyst (Alpha)",
+      "bundleIdentifier": "org.angelauramc.amethyst",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "A new Minecraft Java launcher (JIT)",
+      "localizedDescription": "This is an awesome app only available on AltStore.",
+      "iconURL": "https://i.imgur.com/YCgRgjr.png",
+      "tintColor": "#c5399c",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "1.0",
+          "date": "2025-10-01T03:16:00-04:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/org.angelauramc.amethyst-1.0-ios.ipa",
+          "size": 150700000,
+          "buildVersion": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSLocalNetworkUsageDescription": "Angel Aura Amethyst uses the local network to find and communicate with AltServer and LAN servers.",
+          "NSMicrophoneUsageDescription": "Angel Aura Amethyst uses the microphone to enable support for voice chat mods."
+        }
+      },
+      "patreon": {}
+    },
+    {
+      "name": "Ksign",
+      "bundleIdentifier": "nya.asami.ksign",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "on-device IPA signing tool for iOS",
+      "localizedDescription": "This is an awesome app only available on AltStore.",
+      "iconURL": "https://i.imgur.com/SFh8mBX.png",
+      "tintColor": "#0491fc",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "Latest",
+          "date": "2025-09-24T07:07:00-04:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Nyasami/Ksign/releases/latest/download/Ksign.ipa",
+          "size": 14000000,
+          "buildVersion": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSAccentColorName": "AccentColor",
+          "NSHumanReadableCopyright": "Copyright (c) 2025 Nagata Asami"
+        }
+      },
+      "patreon": {}
+    },
+    {
+      "name": "Flappy Bird",
+      "bundleIdentifier": "org.brandonplank.flappybird",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "Original Flappy Bird",
+      "localizedDescription": "This is an awesome app only available on AltStore.",
+      "iconURL": "https://i.imgur.com/9SgQpzC.png",
+      "tintColor": "#7ce49c",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "4.3",
+          "date": "2025-07-30T20:57:00+02:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/Flappy.Bird_4.3_1751637154.ipa",
+          "size": 2200000,
+          "buildVersion": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      },
+      "patreon": {}
+    },
+    {
+      "name": "OldOS",
+      "bundleIdentifier": "com.zurac.OldOS",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "iOS 4 but in an app",
+      "localizedDescription": "This is an awesome app only available on AltStore.",
+      "iconURL": "https://i.imgur.com/izR9l0Z.png",
+      "tintColor": "#000000",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "1.0",
+          "date": "2025-07-30T20:55:00+02:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/OldOS_1.0_1753907353.ipa",
+          "size": 84400000,
+          "buildVersion": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSAppleMusicUsageDescription": "To view, play, and experience your music in OldOS, please enable access to your music library. ",
+          "NSCameraUsageDescription": "To take photos in OldOS, please enable access to your camera.",
+          "NSContactsUsageDescription": "To view and manage your contacts in OldOS, please enable access to your contacts list.",
+          "NSLocationAlwaysAndWhenInUseUsageDescription": "To enable maps to work properly, and see your current wifi network in Settings, please enable access to your location. Then close and re-open the Maps app.",
+          "NSLocationAlwaysUsageDescription": "To enable maps to work properly, and see your current wifi network in Settings, please enable access to your location. Then close and re-open the Maps app.",
+          "NSLocationWhenInUseUsageDescription": "To enable maps to work properly, and see your current wifi network in Settings, please enable access to your location. Then close and re-open the Maps app.",
+          "NSMicrophoneUsageDescription": "To record your audio while filming a video in OldOS, please in enable microphone access.",
+          "NSPhotoLibraryAddUsageDescription": "To view, manage, and add photos to your photo library in OldOS, please enable access. Then close and re-open the Photos app.",
+          "NSPhotoLibraryUsageDescription": "To view, manage, and add photos to your photo library in OldOS, please enable access. Then close and re-open the Photos app."
+        }
+      },
+      "patreon": {}
+    },
+    {
+      "name": "Pocket Poster",
+      "bundleIdentifier": "com.lemin.Pocket-Poster",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "Custom animated wallpapers for iOS 26.0+ (idevice)",
+      "localizedDescription": "This is an awesome app only available on AltStore.",
+      "iconURL": "https://i.imgur.com/piCXQIR.png",
+      "tintColor": "#6156e2",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "Latest",
+          "date": "2025-07-30T18:52:00-04:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/leminlimez/Pocket-Poster/releases/latest/download/Pocket_Poster.ipa",
+          "size": 13600000,
+          "buildVersion": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      },
+      "patreon": {}
+    },
+    {
+      "name": "PojavLauncher (Discontinued)",
+      "bundleIdentifier": "net.kdt.pojavlauncher",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "Minecraft Java Launcher (JIT)",
+      "localizedDescription": "This is an awesome app only available on AltStore.",
+      "iconURL": "https://i.imgur.com/IYwphJm.png",
+      "tintColor": "#b4745c",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "3.0",
+          "date": "2025-07-30T20:45:00+02:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/ESign_5.0.2_1753907331.ipa",
+          "size": 165500000,
+          "buildVersion": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSLocalNetworkUsageDescription": "PojavLauncher uses the local network to find and communicate with AltServer and LAN servers.",
+          "NSMicrophoneUsageDescription": "PojavLauncher uses the microphone to enable support for voice chat mods."
+        }
+      },
+      "patreon": {}
+    }
+  ],
+  "news": []
+}
