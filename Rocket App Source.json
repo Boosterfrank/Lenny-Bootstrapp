@@ -1,41 +1,52 @@
 {
   "name": "Rocket App Source",
-  "identifier": "com.rocket.source",
-  "subtitle": "An awesome source with the best apps.",
+  "subtitle": "An awsome source with the best apps.",
+  "description": "",
   "iconURL": "https://i.imgur.com/mXKDbia.png",
+  "website": "",
+  "patreonURL": "",
   "tintColor": "#000000",
+  "featuredApps": [],
   "apps": [
     {
       "name": "Geode",
       "bundleIdentifier": "com.geode.launcher",
+      "marketplaceID": "",
       "developerName": "Geode Team",
       "subtitle": "An intuitive mod loader for Geometry Dash.",
       "localizedDescription": "Manages installing and launching Geometry Dash with Geode for iOS.",
       "iconURL": "https://raw.githubusercontent.com/geode-sdk/ios-launcher/refs/heads/main/Resources/AppIcon76x76%402x.png",
       "tintColor": "#6b9193",
       "category": "utilities",
+      "screenshots": [],
       "versions": [
         {
-          "version": "1.4.2",
-          "date": "2025-11-26T15:10:00-05:00",
-          "size": 8300000,
           "downloadURL": "https://github.com/geode-sdk/ios-launcher/releases/download/v1.4.2/com.geode.launcher_1.4.2.ipa",
+          "size": 8300000,
+          "version": "1.4.2",
+          "buildVersion": null,
+          "date": "2025-11-26T15:10:00-05:00",
+          "localizedDescription": null,
           "minOSVersion": "14.0"
         }
       ],
       "appPermissions": {
+        "entitlements": [],
         "privacy": {
           "NSMicrophoneUsageDescription": "A mod you are using is requesting this permission.",
           "NSCameraUsageDescription": "A mod you are using is requesting this permission.",
           "NSLocalNetworkUsageDescription": "This permission is needed for accessing the JIT server."
         }
-      }
+      },
+      "patreon": {}
     },
     {
       "name": "MCDS",
       "bundleIdentifier": "com.rocket.mcdsmobile",
+      "marketplaceID": "",
       "developerName": "Boosterfrank",
       "subtitle": "An app for students at MCDS.",
+      "localizedDescription": "",
       "iconURL": "https://i.imgur.com/NsvAUbz.png",
       "tintColor": "#0c04fc",
       "category": "social",
@@ -49,62 +60,85 @@
         {
           "version": "Latest",
           "date": "2025-10-04T17:20:00-04:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Boosterfrank/mcds-mobile/releases/latest/download/MCDS_Mobile.ipa",
           "size": 8400000,
-          "downloadURL": "https://github.com/Boosterfrank/mcds-mobile/releases/latest/download/MCDS_Mobile.ipa"
+          "buildVersion": null,
+          "minOSVersion": null
         }
-      ]
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      },
+      "patreon": {}
     },
     {
       "name": "AngelAuraAmethyst (Alpha)",
       "bundleIdentifier": "org.angelauramc.amethyst",
+      "marketplaceID": "",
       "developerName": "AngelAuraMC",
       "subtitle": "A new Minecraft Java launcher (JIT)",
       "localizedDescription": "A Minecraft: Java Edition Launcher for iOS based on PojavLauncher.",
       "iconURL": "https://i.imgur.com/YCgRgjr.png",
       "tintColor": "#c5399c",
       "category": "games",
+      "screenshots": [],
       "versions": [
         {
           "version": "1.0",
           "date": "2025-10-01T03:16:00-04:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/org.angelauramc.amethyst-1.0-ios.ipa",
           "size": 150700000,
-          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/org.angelauramc.amethyst-1.0-ios.ipa"
+          "buildVersion": null,
+          "minOSVersion": null
         }
       ],
       "appPermissions": {
+        "entitlements": [],
         "privacy": {
           "NSLocalNetworkUsageDescription": "Angel Aura Amethyst uses the local network to find and communicate with AltServer and LAN servers.",
           "NSMicrophoneUsageDescription": "Angel Aura Amethyst uses the microphone to enable support for voice chat mods."
         }
-      }
+      },
+      "patreon": {}
     },
     {
       "name": "Ksign",
       "bundleIdentifier": "nya.asami.ksign",
+      "marketplaceID": "",
       "developerName": "Nyasami",
       "subtitle": "on-device IPA signing tool for iOS",
       "localizedDescription": "Yet another codesigning app, have you ever wondered what if Feather and Esign had a child?",
       "iconURL": "https://i.imgur.com/SFh8mBX.png",
       "tintColor": "#0491fc",
       "category": "developer",
+      "screenshots": [],
       "versions": [
         {
           "version": "Latest",
           "date": "2025-09-24T07:07:00-04:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Nyasami/Ksign/releases/latest/download/Ksign.ipa",
           "size": 14000000,
-          "downloadURL": "https://github.com/Nyasami/Ksign/releases/latest/download/Ksign.ipa"
+          "buildVersion": null,
+          "minOSVersion": null
         }
       ],
       "appPermissions": {
+        "entitlements": [],
         "privacy": {
           "NSAccentColorName": "AccentColor",
           "NSHumanReadableCopyright": "Copyright (c) 2025 Nagata Asami"
         }
-      }
+      },
+      "patreon": {}
     },
     {
       "name": "Flappy Bird",
       "bundleIdentifier": "org.brandonplank.flappybird",
+      "marketplaceID": "",
       "developerName": "brandonplank",
       "subtitle": "Original Flappy Bird remake",
       "localizedDescription": "This is an extremely close clone to the original FlappyBird by Dong Nguyen.",
@@ -118,17 +152,26 @@
         {
           "version": "4.3",
           "date": "2025-07-30T18:57:00-04:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/brandonplank/flappybird/releases/download/4.3/org.brandonplank.flappybird.ipa",
           "size": 2360000,
-          "downloadURL": "https://github.com/brandonplank/flappybird/releases/download/4.3/org.brandonplank.flappybird.ipa"
+          "buildVersion": null,
+          "minOSVersion": null
         }
-      ]
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      },
+      "patreon": {}
     },
     {
       "name": "OldOS",
       "bundleIdentifier": "com.zurac.OldOSSL2",
+      "marketplaceID": "",
       "developerName": "Zzanehip",
       "subtitle": "iOS 4 but in an app",
-      "localizedDescription": "OldOS is a testament to the days of yesteryear, showcasing what iOS once was ten years ago. The ethos of the app is to merge the technologies of today with a pixel-perfect recreation of the user experience of the past.",
+      "localizedDescription": "OldOS is a testament to the days of yesteryear, showcasing what iOS once was ten years ago. The ethos of the app is to merge the technologies of today with a pixel-perfect recreation of the user experience of the past. The vast majority of apps in OldOS are fully functional — meaning they seamlessly integrate with the data on your phone to deliver a live, emulator-esque experience.",
       "iconURL": "https://pbs.twimg.com/profile_images/1416783489106591746/DGy5_hww_400x400.jpg",
       "tintColor": "#000000",
       "category": "lifestyle",
@@ -141,72 +184,99 @@
       ],
       "versions": [
         {
-          "version": "2.0",
-          "date": "2025-12-04T15:25:00-05:00",
+          "downloadURL": "https://github.com/zzanehip/The-OldOS-Project/releases/download/2.0_1/OldOS-Unsigned.ipa",
           "size": 82500000,
-          "downloadURL": "https://github.com/zzanehip/The-OldOS-Project/releases/download/2.0_1/OldOS-Unsigned.ipa"
+          "version": "2.0",
+          "buildVersion": null,
+          "date": "2025-12-04T15:25:00-05:00",
+          "localizedDescription": null,
+          "minOSVersion": null
         },
         {
           "version": "1.0",
           "date": "2025-07-30T20:55:00+02:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/OldOS_1.0_1753907353.ipa",
           "size": 84400000,
-          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/OldOS_1.0_1753907353.ipa"
+          "buildVersion": null,
+          "minOSVersion": null
         }
       ],
       "appPermissions": {
+        "entitlements": [],
         "privacy": {
-          "NSAppleMusicUsageDescription": "To view, play, and experience your music in OldOS, please enable access to your music library.",
+          "NSAppleMusicUsageDescription": "To view, play, and experience your music in OldOS, please enable access to your music library. ",
           "NSCameraUsageDescription": "To take photos in OldOS, please enable access to your camera.",
           "NSContactsUsageDescription": "To view and manage your contacts in OldOS, please enable access to your contacts list.",
-          "NSLocationAlwaysAndWhenInUseUsageDescription": "To enable maps to work properly, and see your current wifi network in Settings, please enable access to your location.",
-          "NSLocationAlwaysUsageDescription": "To enable maps to work properly, and see your current wifi network in Settings, please enable access to your location.",
-          "NSLocationWhenInUseUsageDescription": "To enable maps to work properly, and see your current wifi network in Settings, please enable access to your location.",
+          "NSLocationAlwaysAndWhenInUseUsageDescription": "To enable maps to work properly, and see your current wifi network in Settings, please enable access to your location. Then close and re-open the Maps app.",
+          "NSLocationAlwaysUsageDescription": "To enable maps to work properly, and see your current wifi network in Settings, please enable access to your location. Then close and re-open the Maps app.",
+          "NSLocationWhenInUseUsageDescription": "To enable maps to work properly, and see your current wifi network in Settings, please enable access to your location. Then close and re-open the Maps app.",
           "NSMicrophoneUsageDescription": "To record your audio while filming a video in OldOS, please in enable microphone access.",
-          "NSPhotoLibraryAddUsageDescription": "To view, manage, and add photos to your photo library in OldOS, please enable access.",
-          "NSPhotoLibraryUsageDescription": "To view, manage, and add photos to your photo library in OldOS, please enable access."
+          "NSPhotoLibraryAddUsageDescription": "To view, manage, and add photos to your photo library in OldOS, please enable access. Then close and re-open the Photos app.",
+          "NSPhotoLibraryUsageDescription": "To view, manage, and add photos to your photo library in OldOS, please enable access. Then close and re-open the Photos app."
         }
-      }
+      },
+      "patreon": {}
     },
     {
       "name": "Pocket Poster",
       "bundleIdentifier": "com.lemin.Pocket-Poster",
+      "marketplaceID": "",
       "developerName": "leminz",
       "subtitle": "Custom animated wallpapers for iOS 26.0+ (idevice)",
+      "localizedDescription": "",
       "iconURL": "https://i.imgur.com/piCXQIR.png",
       "tintColor": "#6156e2",
       "category": "utilities",
+      "screenshots": [],
       "versions": [
         {
           "version": "Latest",
           "date": "2025-07-30T18:52:00-04:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/leminlimez/Pocket-Poster/releases/latest/download/Pocket_Poster.ipa",
           "size": 13600000,
-          "downloadURL": "https://github.com/leminlimez/Pocket-Poster/releases/latest/download/Pocket_Poster.ipa"
+          "buildVersion": null,
+          "minOSVersion": null
         }
-      ]
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      },
+      "patreon": {}
     },
     {
       "name": "PojavLauncher (Discontinued)",
       "bundleIdentifier": "net.kdt.pojavlauncher",
+      "marketplaceID": "",
       "developerName": "PojavLauncherTeam",
       "subtitle": "Minecraft Java Launcher (JIT)",
       "localizedDescription": "From Boardwalk's ashes here comes PojavLauncher!\n\nPojavLauncher is a launcher that allows you to play Minecraft: Java Edition on your Android and iOS devices.",
       "iconURL": "https://i.imgur.com/IYwphJm.png",
       "tintColor": "#b4745c",
       "category": "games",
+      "screenshots": [],
       "versions": [
         {
           "version": "3.0",
           "date": "2025-07-30T20:45:00+02:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/ESign_5.0.2_1753907331.ipa",
           "size": 165500000,
-          "downloadURL": "https://github.com/Boosterfrank/Lenny-Bootstrapp/releases/download/IPA/ESign_5.0.2_1753907331.ipa"
+          "buildVersion": null,
+          "minOSVersion": null
         }
       ],
       "appPermissions": {
+        "entitlements": [],
         "privacy": {
           "NSLocalNetworkUsageDescription": "PojavLauncher uses the local network to find and communicate with AltServer and LAN servers.",
           "NSMicrophoneUsageDescription": "PojavLauncher uses the microphone to enable support for voice chat mods."
         }
-      }
+      },
+      "patreon": {}
     }
-  ]
+  ],
+  "news": []
 }
