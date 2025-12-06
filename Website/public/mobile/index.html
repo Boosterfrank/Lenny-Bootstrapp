@@ -150,8 +150,7 @@
           const subjectCN = certInfo.subject.commonName || 'Unknown Subject';
 
           const green = certStatus.status.toLowerCase() === 'signed';
-          certIssuerCNEl.textContent = `Certificate: ${subjectCN}`;
-          certIssuerEl.textContent = `Issuer: ${issuerCN}`;
+          certIssuerCNEl.textContent = `Certificate: ${issuerCN}`;
           certStatusEl.textContent = `${green ? '🟢' : '🔴'} ${certStatus.status} • Valid until ${valid_to.toLocaleDateString()}`;
         } else {
           certIssuerCNEl.textContent = '';
