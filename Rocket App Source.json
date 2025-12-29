@@ -41,39 +41,6 @@
       "patreon": {}
     },
     {
-      "name": "MCDS",
-      "bundleIdentifier": "com.rocket.mcdsmobile",
-      "marketplaceID": "",
-      "developerName": "Boosterfrank",
-      "subtitle": "An app for students at MCDS.",
-      "localizedDescription": "",
-      "iconURL": "https://i.imgur.com/NsvAUbz.png",
-      "tintColor": "#0c04fc",
-      "category": "social",
-      "screenshots": [
-        "https://is2-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/2e/e6/c7/2ee6c758-af02-67ce-2b80-178a5e67c3bf/Image.png/0x0ss.png",
-        "https://is2-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/84/57/e1/8457e1ff-0eb2-3536-5bb5-ca712dfe600b/Image.png/0x0ss.png",
-        "https://is2-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/79/1d/5c/791d5caa-0c6a-84f5-331e-2210438cb764/Image.png/0x0ss.png",
-        "https://is2-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/aa/6b/50/aa6b50a5-3335-1033-86ec-bd280e82c114/Image.png/0x0ss.png"
-      ],
-      "versions": [
-        {
-          "version": "Latest",
-          "date": "2025-10-04T17:20:00-04:00",
-          "localizedDescription": null,
-          "downloadURL": "https://testflight.apple.com/join/SJ4jKFx5",
-          "size": 8400000,
-          "buildVersion": null,
-          "minOSVersion": null
-        }
-      ],
-      "appPermissions": {
-        "entitlements": [],
-        "privacy": {}
-      },
-      "patreon": {}
-    },
-    {
       "name": "AngelAuraAmethyst (Alpha)",
       "bundleIdentifier": "org.angelauramc.amethyst",
       "marketplaceID": "",
