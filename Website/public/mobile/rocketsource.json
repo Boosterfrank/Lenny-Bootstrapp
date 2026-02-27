@@ -32,14 +32,14 @@
       }
     },
     {
-      "name": "MCDS",
+      "name": "MCDS (Old)",
       "bundleIdentifier": "com.rocket.mcdsmobile",
       "developerName": "Boosterfrank",
-      "subtitle": "An app for students at MCDS.",
+      "subtitle": "An app for US students at MCDS.",
       "iconURL": "https://i.imgur.com/NsvAUbz.png",
       "tintColor": "#0c04fc",
       "category": "social",
-      "screenshots": [
+      "screenshotURLs": [
         "https://is2-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/2e/e6/c7/2ee6c758-af02-67ce-2b80-178a5e67c3bf/Image.png/0x0ss.png",
         "https://is2-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/84/57/e1/8457e1ff-0eb2-3536-5bb5-ca712dfe600b/Image.png/0x0ss.png",
         "https://is2-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/79/1d/5c/791d5caa-0c6a-84f5-331e-2210438cb764/Image.png/0x0ss.png",
@@ -111,7 +111,7 @@
       "iconURL": "https://i.imgur.com/9SgQpzC.png",
       "tintColor": "#7ce49c",
       "category": "games",
-      "screenshots": [
+      "screenshotURLs": [
         "https://github.com/brandonplank/flappybird/blob/main/demo/demo.gif?raw=true"
       ],
       "versions": [
@@ -129,10 +129,10 @@
       "developerName": "Zzanehip",
       "subtitle": "iOS 4 but in an app",
       "localizedDescription": "OldOS is a testament to the days of yesteryear, showcasing what iOS once was ten years ago. The ethos of the app is to merge the technologies of today with a pixel-perfect recreation of the user experience of the past.",
-      "iconURL": "https://pbs.twimg.com/profile_images/1416783489106591746/DGy5_hww_400x400.jpg",
+      "iconURL": "https://ipa.cypwn.xyz/serve/icons/OldOS.png",
       "tintColor": "#000000",
       "category": "lifestyle",
-      "screenshots": [
+      "screenshotURLs": [
         "https://raw.githubusercontent.com/zzanehip/The-OldOS-Project/refs/heads/master/Images/Market_1.jpg",
         "https://github.com/zzanehip/The-OldOS-Project/blob/master/Images/Market_2.jpg?raw=true",
         "https://github.com/zzanehip/The-OldOS-Project/blob/master/Images/Market_3.jpg?raw=true",
